@@ -31,7 +31,7 @@ public class muoviAereoplano extends Application{
 	boolean spostaAVANTI=false;
 	boolean spostaINDIETRO=false;
 	int posizioneNaviciella[] = {0, (HEIGTH_SCHERMO-WIDTH_NAVICELLA)/2};
-	int valoreSpostamento=10;
+	int valoreSpostamentoNavicella=10;
 	Timeline muoviNavicella= new Timeline(new KeyFrame(
 		      Duration.millis(25), 
 		      x -> aggiornaPosizioneNavicella()));
@@ -93,18 +93,18 @@ public class muoviAereoplano extends Application{
 	}
 	public void aggiornaPosizioneNavicella() {
 		if(spostaSU && navicella.getLayoutY()>=-20) {
-			posizioneNaviciella[1]-=valoreSpostamento;
+			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
 		}
 		if(spostaGIU && navicella.getLayoutY()<=HEIGTH_SCHERMO-WIDTH_NAVICELLA) {
-			posizioneNaviciella[1]+=valoreSpostamento;
+			posizioneNaviciella[1]+=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
 		}if(spostaAVANTI && navicella.getLayoutX()<=WIDTH_SCHERMO-HEIGTH_NAVICELLA) {
-			posizioneNaviciella[0]+=valoreSpostamento;
+			posizioneNaviciella[0]+=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 		}
 		if(spostaINDIETRO && navicella.getLayoutX()>=0) {
-			posizioneNaviciella[0]-=valoreSpostamento;
+			posizioneNaviciella[0]-=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 		}
 	}
