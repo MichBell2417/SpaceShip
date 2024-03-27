@@ -22,6 +22,10 @@ public class Spaceship extends Application{
 	final int HEIGTH_SFONDO = 800;
 	Image immagineSfondo = new Image(getClass().getResourceAsStream("Sfondo.png"));
 	ImageView sfondo = new ImageView(immagineSfondo);
+	final int WIDTH_SFOCATURA=2000;
+	final int HEIGTH_SFOCATURA = 1600;
+	Image immagineSfocatura = new Image(getClass().getResourceAsStream("Sfocatura.png"));
+	ImageView sfocatura = new ImageView(immagineSfocatura);
 	//spostamento sfondo
 	double tempoDiSpostamentoTOT=25; //se si vuole scegliere la durata del gioco standard 25s
 	double posizioneSfondoX=0;
@@ -72,11 +76,15 @@ public class Spaceship extends Application{
 		sfondo.setFitWidth(WIDTH_SFONDO);
 		sfondo.setFitHeight(HEIGTH_SFONDO);
 		sfondo.setLayoutX(0);
-		sfondo.setLayoutY(0);
+		sfondo.setLayoutY((HEIGTH_SCHERMO-HEIGTH_SFONDO)/2);
 		muoviSfondo.setCycleCount(Animation.INDEFINITE);
 		muoviSfondo.play();
 		interfaccia.getChildren().add(sfondo);
-
+		sfocatura.setFitWidth(WIDTH_SFOCATURA);
+		sfocatura.setFitHeight(HEIGTH_SFOCATURA);
+		sfocatura.setLayoutX(0);
+		sfocatura.setLayoutY((HEIGTH_SCHERMO-HEIGTH_SFOCATURA)/2);
+		
 		//settaggi oggetti
 		int immagine, posizioneY, rotazione;
 		for(int n=0; n<nOggetti; n++) {
@@ -106,6 +114,7 @@ public class Spaceship extends Application{
 		muoviNavicella.setCycleCount(Animation.INDEFINITE);
 		muoviNavicella.play();
 
+		interfaccia.getChildren().add(sfocatura);
 		Scene scena=new Scene(interfaccia, WIDTH_SCHERMO, HEIGTH_SCHERMO);
 
 		scena.setOnKeyPressed(e -> pigiato(e));
@@ -120,6 +129,11 @@ public class Spaceship extends Application{
 	public void aggiornaPosizioneSfondo() {
 		posizioneSfondoX-=valoreSpostamentoSfondo;
 		sfondo.setLayoutX(posizioneSfondoX);
+		double posizioneFinaleSfondo=posizioneSfondoX+WIDTH_SFONDO;
+		sfocatura.setLayoutX(posizioneFinaleSfondo-WIDTH_SFOCATURA/2);
+		if(posizioneFinaleSfondo>WIDTH_SCHERMO && posizioneFinaleSfondo<WIDTH_SCHERMO+20) {
+			muoviSfondo.stop();
+		}
 	}
 
 	public void spostaOggetti() {
