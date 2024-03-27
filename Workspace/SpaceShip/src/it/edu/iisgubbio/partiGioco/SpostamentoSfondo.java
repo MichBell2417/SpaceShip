@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class SfondoConOggetti extends Application{
+public class SpostamentoSfondo extends Application{
 	//SCHERMO
 	final int WIDTH_SCHERMO = 1000;
 	final int HEIGTH_SCHERMO = 600;
@@ -23,8 +23,9 @@ public class SfondoConOggetti extends Application{
 	ImageView sfondo = new ImageView(immagineSfondo);
 	
 	//spostamento sfondo
+	double tempoDiSpostamentoTOT=25; //se si vuole scegliere la durata del gioco standard 25s
 	double posizioneSfondoX=0;
-	double valoreSpostamentoSfondo=6;
+	double valoreSpostamentoSfondo=WIDTH_SFONDO*25/(tempoDiSpostamentoTOT*1000);
 	Timeline muoviSfondo= new Timeline(new KeyFrame(
 		      Duration.millis(25), 
 		      x -> aggiornaPosizioneSfondo()));

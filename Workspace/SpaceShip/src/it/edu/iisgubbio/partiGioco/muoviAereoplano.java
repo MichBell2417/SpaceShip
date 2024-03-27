@@ -61,18 +61,18 @@ public class muoviAereoplano extends Application{
 	
 	public void pigiato(KeyEvent pulsante) {
 		switch(pulsante.getText().toLowerCase()) {
-			case "w" :
-				spostaSU=true;
-				break;
-			case "d" :
-				spostaAVANTI=true;
-				break;
-			case "s" :
-				spostaGIU=true;
-				break;
-			case "a" :
-				spostaINDIETRO=true;
-				break;
+		case "w" :
+			spostaSU=true;
+			break;
+		case "d" :
+			spostaAVANTI=true;
+			break;
+		case "s" :
+			spostaGIU=true;
+			break;
+		case "a" :
+			spostaINDIETRO=true;
+			break;
 		}
 	}
 	public void rilasciato(KeyEvent pulsante) {
