@@ -68,7 +68,17 @@ public class Spaceship extends Application{
 	Timeline muoviNavicella= new Timeline(new KeyFrame(
 			Duration.millis(25), 
 			x -> aggiornaPosizioneNavicella()));
-	
+
+	//LASER
+	final int WIDTH_LASER = 60;
+	final int HEIGTH_LASER = 30;
+	int numeroMunizioni=1000;
+	int munizioniUtilizzate=0;
+	ImageView[] munizioni= new ImageView[numeroMunizioni];
+	//spawn missile
+	int precedente=0;
+	long tempoScorsoMissile;
+
 	public void start(Stage finestra) {
 		Pane interfaccia = new Pane();
 
@@ -104,6 +114,16 @@ public class Spaceship extends Application{
 		muoviOggetti.setCycleCount(Animation.INDEFINITE);
 		muoviOggetti.play();
 
+		//riempimento munizioni
+		for(int nM=0; nM<numeroMunizioni; nM++) {
+			Image immagineMissile=new Image(getClass().getResourceAsStream("Missile.png"));
+			munizioni[nM]=new ImageView(immagineMissile);
+			munizioni[nM].setFitHeight(HEIGTH_LASER);
+			munizioni[nM].setFitWidth(WIDTH_LASER);
+			munizioni[nM].setLayoutX(WIDTH_SCHERMO);;
+			interfaccia.getChildren().add(munizioni[nM]);
+		} 
+		
 		//settaggio navicella
 		navicella.setFitWidth(WIDTH_NAVICELLA);
 		navicella.setFitHeight(HEIGTH_NAVICELLA);
@@ -159,7 +179,19 @@ public class Spaceship extends Application{
 			numeroOggettoPrecedente=0;
 		}
 	}
-
+	public void spara() {
+		if(System.currentTimeMillis()-tempoScorsoMissile>=100) {
+			if(munizioniUtilizzate==numeroMunizioni) {
+				
+			}else {
+				munizioni[munizioniUtilizzate].setLayoutY(navicella.getLayoutY()+(HEIGTH_NAVICELLA/2-HEIGTH_LASER/2));
+				munizioni[munizioniUtilizzate].setLayoutX(navicella.getLayoutX()+WIDTH_NAVICELLA-WIDTH_LASER);
+				munizioniUtilizzate++;
+				precedente=munizioniUtilizzate-1;
+				tempoScorsoMissile= System.currentTimeMillis();
+			}	
+		}
+	}
 	public void pigiato(KeyEvent pulsante) {
 		switch(pulsante.getText().toLowerCase()) {
 		case "w" :
@@ -173,6 +205,9 @@ public class Spaceship extends Application{
 			break;
 		case "a" :
 			spostaINDIETRO=true;
+			break;
+		case " ":
+			spara();
 			break;
 		}
 	}
@@ -193,6 +228,9 @@ public class Spaceship extends Application{
 		}
 	}
 	public void aggiornaPosizioneNavicella() {
+		for(int nM=0; nM<munizioniUtilizzate; nM++) { 
+			munizioni[nM].setLayoutX(munizioni[nM].getLayoutX()+valoreSpostamentoNavicella+5);
+		}
 		if(spostaSU && navicella.getLayoutY()>=-20) {
 			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
