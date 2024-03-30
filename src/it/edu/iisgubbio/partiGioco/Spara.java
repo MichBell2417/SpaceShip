@@ -125,6 +125,9 @@ public class Spara extends Application{
 	public void aggiornaPosizioneNavicella() {
 		for(int nM=0; nM<munizioniUtilizzate; nM++) { 
 			munizioni[nM].setLayoutX(munizioni[nM].getLayoutX()+valoreSpostamentoNavicella+5);
+			if(munizioni[nM].getLayoutX()>=WIDTH_SCHERMO) {
+				rimuoviOggetto(10, munizioni[nM]);
+			}
 		}
 		if(spostaSU && navicella.getLayoutY()>=-20) {
 			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
@@ -141,6 +144,17 @@ public class Spara extends Application{
 			posizioneNaviciella[0]-=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 		}
+	}
+	public void rimuoviOggetto(int traQuantoTempo, ImageView oggetto) {
+		Timeline eliminaOggetto;
+		eliminaOggetto= new Timeline(new KeyFrame(
+				Duration.millis(traQuantoTempo), 
+				x -> eseguiRimozione(oggetto)));
+		eliminaOggetto.setCycleCount(1);
+		eliminaOggetto.play();
+	}
+	public void eseguiRimozione(ImageView oggetto) {
+			interfaccia.getChildren().remove(oggetto);
 	}
 
 	public static void main(String[] args){

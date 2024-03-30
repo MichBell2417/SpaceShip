@@ -14,6 +14,7 @@ import javafx.util.Duration;
 
 public class Spaceship extends Application{
 	//SCHERMO
+	Pane interfaccia = new Pane();
 	final int WIDTH_SCHERMO = 1000;
 	final int HEIGTH_SCHERMO = 600;
 
@@ -80,7 +81,6 @@ public class Spaceship extends Application{
 	long tempoScorsoMissile;
 
 	public void start(Stage finestra) {
-		Pane interfaccia = new Pane();
 
 		//settaggi sfondo
 		sfondo.setFitWidth(WIDTH_SFONDO);
@@ -142,7 +142,7 @@ public class Spaceship extends Application{
 
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
-		finestra.resizableProperty().setValue(false); //blocca il ridimensionamento della finestra
+		//finestra.resizableProperty().setValue(false); //blocca il ridimensionamento della finestra
 		finestra.show();		
 	}
 
@@ -230,6 +230,9 @@ public class Spaceship extends Application{
 	public void aggiornaPosizioneNavicella() {
 		for(int nM=0; nM<munizioniUtilizzate; nM++) { 
 			munizioni[nM].setLayoutX(munizioni[nM].getLayoutX()+valoreSpostamentoNavicella+5);
+			if(munizioni[nM].getLayoutX()>=WIDTH_SCHERMO) {
+				rimuoviOggetto(10, munizioni[nM]);
+			}
 		}
 		if(spostaSU && navicella.getLayoutY()>=-20) {
 			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
@@ -246,6 +249,17 @@ public class Spaceship extends Application{
 			posizioneNaviciella[0]-=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 		}
+	}
+	public void rimuoviOggetto(int traQuantoTempo, ImageView oggetto) {
+		Timeline eliminaOggetto;
+		eliminaOggetto= new Timeline(new KeyFrame(
+				Duration.millis(traQuantoTempo), 
+				x -> eseguiRimozione(oggetto)));
+		eliminaOggetto.setCycleCount(1);
+		eliminaOggetto.play();
+	}
+	public void eseguiRimozione(ImageView oggetto) {
+			interfaccia.getChildren().remove(oggetto);
 	}
 	public static void main(String[] args){
 		launch(args);
