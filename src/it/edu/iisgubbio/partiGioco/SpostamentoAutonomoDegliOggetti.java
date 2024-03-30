@@ -70,7 +70,6 @@ public class SpostamentoAutonomoDegliOggetti extends Application{
 				}else {
 					oggettoAttuale.setLayoutX(oggettoAttuale.getLayoutX()-3);
 				}
-				
 			}
 			numeroOggettoAttuale++;
 			if(numeroOggettoAttuale>=1) {
