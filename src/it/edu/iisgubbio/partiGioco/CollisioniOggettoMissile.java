@@ -73,7 +73,7 @@ public class CollisioniOggettoMissile extends Application{
 	//esplosione
 	final int WIDTH_ESPLOSIONE = 200;
 	final int HEIGTH_ESPLOSIONE = 200;
-	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione2.gif"));
+	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione1.gif"));
 	
 	public void start(Stage finestra) {
 		//riempimento munizioni
@@ -173,6 +173,7 @@ public class CollisioniOggettoMissile extends Application{
 	}
 	
 	int numeroOggettoBound=0;
+	int conta=0;
 	public void aggiornaPosizioneNavicella() { 
 		ImageView oggettoSottopostoBound;
 		numeroOggettoBound++;
@@ -196,12 +197,14 @@ public class CollisioniOggettoMissile extends Application{
 				//spostiamo il missile eli oggetti
 				riposizionaOggetto(oggettoSottopostoBound);
 				rimuoviOggetto(10, munizioni[nM]); // spostiamo il missile ad una posizione fuori dalla portata degli oggetti
+				conta++;
 				System.out.println(posizioneXMissile+"+"+posizioneXMeteorie+"/2"+" = "+(posizioneXMissile+posizioneXMeteorie)/2);
 				System.out.println(posizioneYMissile+HEIGTH_ESPLOSIONE/2);
+				System.out.println("questa è la "+conta+" volta che compare l'esplosione");
 				//posizioniamo l'esplosione
 				ImageView esplosione=new ImageView(animazioneEsplosione);
 				esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
-				esplosione.setFitWidth(WIDTH_ESPLOSIONE);
+				esplosione.setFitWidth(WIDTH_ESPLOSIONE);    
 				interfaccia.getChildren().add(esplosione);
 				esplosione.setLayoutX(((posizioneXMissile+posizioneXMeteorie)/2)-WIDTH_ESPLOSIONE/2);
 				esplosione.setLayoutY(posizioneYMissile-HEIGTH_ESPLOSIONE/2);
@@ -233,6 +236,7 @@ public class CollisioniOggettoMissile extends Application{
 		eliminaOggetto.play();
 	}
 	public void eseguiRimozione(ImageView oggetto) {
+			oggetto.setLayoutX(WIDTH_SCHERMO*2);
 			interfaccia.getChildren().remove(oggetto);
 	}
 	/*
