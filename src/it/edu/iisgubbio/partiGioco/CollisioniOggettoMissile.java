@@ -37,7 +37,7 @@ public class CollisioniOggettoMissile extends Application{
 			Duration.millis(25), 
 			x -> aggiornaPosizioneNavicella()));
 
-	//LASER
+	//MUNIZIONI
 	final int WIDTH_LASER = 60;
 	final int HEIGTH_LASER = 30;
 	int numeroMunizioni=1000;
@@ -68,8 +68,13 @@ public class CollisioniOggettoMissile extends Application{
 			x -> spostaOggetti()));
 
 	//intersezioni
+	boolean[] numeriMunizioniEsaurite= new boolean[numeroMunizioni];
 	Bounds boundOggetti;
 	Bounds boundMissile;
+	//controlla intersezione
+	Timeline controllaCollisione= new Timeline(new KeyFrame(
+			Duration.millis(1), 
+			x -> metodoControllaCollisione()));
 	//esplosione
 	final int WIDTH_ESPLOSIONE = 200;
 	final int HEIGTH_ESPLOSIONE = 200;
@@ -120,6 +125,10 @@ public class CollisioniOggettoMissile extends Application{
 		scena.setOnKeyPressed(e -> pigiato(e));
 		scena.setOnKeyReleased(e -> rilasciato(e));
 
+		//controlla collisioni
+		controllaCollisione.setCycleCount(Animation.INDEFINITE);
+		controllaCollisione.play();
+		
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();		
@@ -173,8 +182,9 @@ public class CollisioniOggettoMissile extends Application{
 	}
 	
 	int numeroOggettoBound=0;
+	int numeroMissileBound=0;
 	int conta=0;
-	public void aggiornaPosizioneNavicella() { 
+	public void metodoControllaCollisione() {
 		ImageView oggettoSottopostoBound;
 		numeroOggettoBound++;
 		if(numeroOggettoBound==nOggetti) {
@@ -182,34 +192,50 @@ public class CollisioniOggettoMissile extends Application{
 		}
 		oggettoSottopostoBound=vettoreOggetti[numeroOggettoBound];
 		boundOggetti=oggettoSottopostoBound.getBoundsInParent();
+		
+		ImageView missileSottopostoBound;
+		//long start = System.nanoTime();
+		for(int i=0; i<munizioniUtilizzate; i++) {
+			if(!numeriMunizioniEsaurite[i]) {
+				missileSottopostoBound=munizioni[i];
+				boundMissile=missileSottopostoBound.getBoundsInParent();
+				System.out.println("controllo intersezione");
+				if(missileSottopostoBound.getLayoutX()>WIDTH_SCHERMO) {
+					rimuoviOggetto(10, missileSottopostoBound);
+					numeriMunizioniEsaurite[i]=true;
+				}
+				if(boundMissile.intersects(boundOggetti)) {
+					int posizioneXMissile, posizioneXMeteorie, posizioneYMissile;
+					//prendiamo le posizione del missile e gli oggetti
+					posizioneXMissile=(int) (missileSottopostoBound.getLayoutX()+WIDTH_LASER);
+					posizioneXMeteorie=(int) (oggettoSottopostoBound.getLayoutX());
+					posizioneYMissile=(int) (missileSottopostoBound.getLayoutY());
+					//spostiamo il missile eli oggetti
+					riposizionaOggetto(oggettoSottopostoBound);
+					rimuoviOggetto(10, missileSottopostoBound); // spostiamo il missile ad una posizione fuori dalla portata degli oggetti
+					numeriMunizioniEsaurite[i]=true;
+					conta++;
+					//System.out.println(posizioneXMissile+"+"+posizioneXMeteorie+"/2"+" = "+(posizioneXMissile+posizioneXMeteorie)/2);
+					//System.out.println(posizioneYMissile+HEIGTH_ESPLOSIONE/2);
+					//System.out.println("questa è la "+conta+" volta che compare l'esplosione");
+					//posizioniamo l'esplosione
+					ImageView esplosione=new ImageView(animazioneEsplosione);
+					esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
+					esplosione.setFitWidth(WIDTH_ESPLOSIONE);    
+					interfaccia.getChildren().add(esplosione);
+					esplosione.setLayoutX(((posizioneXMissile+posizioneXMeteorie)/2)-WIDTH_ESPLOSIONE/2);
+					esplosione.setLayoutY(posizioneYMissile-HEIGTH_ESPLOSIONE/2);
+					rimuoviOggetto(500, esplosione);
+				}
+			}
+		}
+		//long end = System.nanoTime();
+		//System.out.println("c'ho messo "+(end-start));
+	}
+	
+	public void aggiornaPosizioneNavicella() { 
 		for(int nM=0; nM<munizioniUtilizzate; nM++) {
-			if(munizioni[nM].getLayoutX()>=WIDTH_SCHERMO) {
-			rimuoviOggetto(10, munizioni[nM]);
-			}
 			munizioni[nM].setLayoutX(munizioni[nM].getLayoutX()+valoreSpostamentoNavicella+5);
-			boundMissile=munizioni[nM].getBoundsInParent();
-			if(boundMissile.intersects(boundOggetti)) {
-				int posizioneXMissile, posizioneXMeteorie, posizioneYMissile;
-				//prendiamo le posizione del missile e gli oggetti
-				posizioneXMissile=(int) (munizioni[nM].getLayoutX()+WIDTH_LASER);
-				posizioneXMeteorie=(int) (oggettoSottopostoBound.getLayoutX());
-				posizioneYMissile=(int) (munizioni[nM].getLayoutY());
-				//spostiamo il missile eli oggetti
-				riposizionaOggetto(oggettoSottopostoBound);
-				rimuoviOggetto(10, munizioni[nM]); // spostiamo il missile ad una posizione fuori dalla portata degli oggetti
-				conta++;
-				System.out.println(posizioneXMissile+"+"+posizioneXMeteorie+"/2"+" = "+(posizioneXMissile+posizioneXMeteorie)/2);
-				System.out.println(posizioneYMissile+HEIGTH_ESPLOSIONE/2);
-				System.out.println("questa è la "+conta+" volta che compare l'esplosione");
-				//posizioniamo l'esplosione
-				ImageView esplosione=new ImageView(animazioneEsplosione);
-				esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
-				esplosione.setFitWidth(WIDTH_ESPLOSIONE);    
-				interfaccia.getChildren().add(esplosione);
-				esplosione.setLayoutX(((posizioneXMissile+posizioneXMeteorie)/2)-WIDTH_ESPLOSIONE/2);
-				esplosione.setLayoutY(posizioneYMissile-HEIGTH_ESPLOSIONE/2);
-				rimuoviOggetto(500, esplosione);
-			}
 		}
 		if(spostaSU && navicella.getLayoutY()>=-20) {
 			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
