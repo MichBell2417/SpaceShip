@@ -34,7 +34,7 @@ public class CollisioniOggettoMissile extends Application{
 	int posizioneNaviciella[] = {0, (HEIGTH_SCHERMO-WIDTH_NAVICELLA)/2};
 	int valoreSpostamentoNavicella=10;
 	Timeline muoviNavicella= new Timeline(new KeyFrame(
-			Duration.millis(25), 
+			Duration.millis(10), 
 			x -> aggiornaPosizioneNavicella()));
 
 	//LASER
@@ -73,7 +73,7 @@ public class CollisioniOggettoMissile extends Application{
 	//esplosione
 	final int WIDTH_ESPLOSIONE = 200;
 	final int HEIGTH_ESPLOSIONE = 200;
-	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione2.gif"));
+	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione1.gif"));
 	
 	public void start(Stage finestra) {
 		//riempimento munizioni
@@ -233,6 +233,7 @@ public class CollisioniOggettoMissile extends Application{
 		eliminaOggetto.play();
 	}
 	public void eseguiRimozione(ImageView oggetto) {
+			oggetto.setLayoutX(2000);
 			interfaccia.getChildren().remove(oggetto);
 	}
 	/*
