@@ -50,7 +50,7 @@ public class CollisioniOggettoMissile extends Application{
 	
 	//OGGETTI
 	final int DIMENSION_OGGETTI = 100; //gli oggetti sono quadrati
-	int nOggetti=15;
+	int nOggetti=10;
 	Image immagineUfo = new Image(getClass().getResourceAsStream("Ufo.png"));
 	Image immagineMeteoriteBlu = new Image(getClass().getResourceAsStream("MeteoriteBlu.png"));
 	Image immagineMeteoriteViola = new Image(getClass().getResourceAsStream("MeteoriteViola.png"));
@@ -58,7 +58,6 @@ public class CollisioniOggettoMissile extends Application{
 	ImageView vettoreOggetti[]=new ImageView[nOggetti];
 
 	//spostamento oggetti
-	long tempoSpostamentoPrecedente=0;
 	ImageView oggettoAttuale;
 	int numeroOggettoPrecedente=0;
 	int numeroOggettoAttuale=0;
@@ -68,7 +67,7 @@ public class CollisioniOggettoMissile extends Application{
 			x -> spostaOggetti()));
 
 	//intersezioni
-	boolean[] numeriMunizioniEsaurite= new boolean[numeroMunizioni];
+	boolean[] numeriMunizioniEsaurite= new boolean[numeroMunizioni]; // vettore che contiene lo stato di ogni missile
 	Bounds boundOggetti;
 	Bounds boundMissile;
 	//controlla intersezione
@@ -78,7 +77,7 @@ public class CollisioniOggettoMissile extends Application{
 	//esplosione
 	final int WIDTH_ESPLOSIONE = 200;
 	final int HEIGTH_ESPLOSIONE = 200;
-	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione1.gif"));
+	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione2.gif"));
 	
 	public void start(Stage finestra) {
 		//riempimento munizioni
@@ -100,7 +99,8 @@ public class CollisioniOggettoMissile extends Application{
 		interfaccia.getChildren().add(navicella);
 		muoviNavicella.setCycleCount(Animation.INDEFINITE);
 		muoviNavicella.play();
-
+		
+		//inserisci gli oggetti nel vetore e li posiziona
 		int immagine, posizioneY, rotazione, posizioneX;
 		for(int n=0; n<nOggetti; n++) {
 			posizioneY=(int)(Math.random()*(HEIGTH_SCHERMO-DIMENSION_OGGETTI));
@@ -136,7 +136,7 @@ public class CollisioniOggettoMissile extends Application{
 	public void spara() {
 		if(System.currentTimeMillis()-tempoScorsoMissile>=100) {
 			if(munizioniUtilizzate==numeroMunizioni) {
-
+				System.out.println("munizioni esaurite");
 			}else {
 				munizioni[munizioniUtilizzate].setLayoutY(navicella.getLayoutY()+(HEIGTH_NAVICELLA/2-HEIGTH_LASER/2));
 				munizioni[munizioniUtilizzate].setLayoutX(navicella.getLayoutX()+WIDTH_NAVICELLA-WIDTH_LASER);
@@ -196,10 +196,9 @@ public class CollisioniOggettoMissile extends Application{
 		ImageView missileSottopostoBound;
 		//long start = System.nanoTime();
 		for(int i=0; i<munizioniUtilizzate; i++) {
-			if(!numeriMunizioniEsaurite[i]) {
+			if(!numeriMunizioniEsaurite[i]) { //controlliamo se il missile è esploso o scomparso
 				missileSottopostoBound=munizioni[i];
 				boundMissile=missileSottopostoBound.getBoundsInParent();
-				System.out.println("controllo intersezione");
 				if(missileSottopostoBound.getLayoutX()>WIDTH_SCHERMO) {
 					rimuoviOggetto(10, missileSottopostoBound);
 					numeriMunizioniEsaurite[i]=true;
@@ -215,9 +214,11 @@ public class CollisioniOggettoMissile extends Application{
 					rimuoviOggetto(10, missileSottopostoBound); // spostiamo il missile ad una posizione fuori dalla portata degli oggetti
 					numeriMunizioniEsaurite[i]=true;
 					conta++;
-					//System.out.println(posizioneXMissile+"+"+posizioneXMeteorie+"/2"+" = "+(posizioneXMissile+posizioneXMeteorie)/2);
-					//System.out.println(posizioneYMissile+HEIGTH_ESPLOSIONE/2);
-					//System.out.println("questa è la "+conta+" volta che compare l'esplosione");
+					/*
+					System.out.println(posizioneXMissile+"+"+posizioneXMeteorie+"/2"+" = "+(posizioneXMissile+posizioneXMeteorie)/2);
+					System.out.println(posizioneYMissile+"+"+HEIGTH_ESPLOSIONE+"/2"+" = "+(posizioneYMissile+HEIGTH_ESPLOSIONE/2));
+					System.out.println("questa è la "+conta+" volta che compare l'esplosione");
+					*/
 					//posizioniamo l'esplosione
 					ImageView esplosione=new ImageView(animazioneEsplosione);
 					esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
