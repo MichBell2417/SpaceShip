@@ -38,7 +38,7 @@ public class Spara extends Application{
 	//LASER
 	final int WIDTH_LASER = 60;
 	final int HEIGTH_LASER = 30;
-	int numeroMunizioni=1000;
+	int numeroMunizioni=10;
 	int munizioniUtilizzate=0;
 	ImageView[] munizioni= new ImageView[numeroMunizioni];
 	//spawn missile

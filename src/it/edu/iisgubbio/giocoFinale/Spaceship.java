@@ -28,7 +28,7 @@ public class Spaceship extends Application{
 	Image immagineSfocatura = new Image(getClass().getResourceAsStream("Sfocatura.png"));
 	ImageView sfocatura = new ImageView(immagineSfocatura);
 	//spostamento sfondo
-	double tempoDiSpostamentoTOT=25; //se si vuole scegliere la durata del gioco standard 25s
+	double tempoDiSpostamentoTOT=2; //se si vuole scegliere la durata del gioco standard 25s
 	double posizioneSfondoX=0;
 	double valoreSpostamentoSfondo=WIDTH_SFONDO*25/(tempoDiSpostamentoTOT*1000);
 	Timeline muoviSfondo= new Timeline(new KeyFrame(
@@ -142,7 +142,7 @@ public class Spaceship extends Application{
 
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
-		//finestra.resizableProperty().setValue(false); //blocca il ridimensionamento della finestra
+		finestra.resizableProperty().setValue(false); //blocca il ridimensionamento della finestra
 		finestra.show();		
 	}
 
