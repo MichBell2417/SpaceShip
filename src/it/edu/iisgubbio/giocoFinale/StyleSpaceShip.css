@@ -1,0 +1,28 @@
+.pain{
+	-fx-background-color: black;
+}
+.buttonHome{
+	-fx-pref-width: 200;
+	-fx-pref-height: 40;
+	-fx-background-color: rgba(128,128,128,0.5);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 20px;
+	-fx-padding: 3;
+	-fx-background-radius: 23;
+}
+.buttonHome:hover{
+	-fx-pref-width: 200;
+	-fx-pref-height: 40;
+	-fx-padding: 0;
+	-fx-font-size: 22;
+	-fx-background-color: rgba(128,128,128,0.7);
+	-fx-pref-width: 205;
+	-fx-pref-height: 45;
+}
+.menuHome{
+	-fx-pref-width: 250;
+	-fx-pref-height: 230;
+	-fx-background-color: rgba(0,0,160,0.8);
+	-fx-background-radius: 23;
+}

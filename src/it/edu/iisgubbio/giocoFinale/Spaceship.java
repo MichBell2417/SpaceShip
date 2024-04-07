@@ -4,18 +4,31 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class Spaceship extends Application {
+	/* TODO: aggiungere vettore per gli sfondi di ciascun livello del gioco
+	 * TODO: inserire la vita agli oggetti
+	 * TODO: fare collisione navicella oggetti
+	 * TODO: aggiungere musica epica
+	 */
 	// SCHERMO
-	Pane interfaccia = new Pane();
+	Pane schermo = new Pane();
 	final int WIDTH_SCHERMO = 1000;
 	final int HEIGTH_SCHERMO = 600;
 
@@ -85,82 +98,208 @@ public class Spaceship extends Application {
 	final int WIDTH_ESPLOSIONE = 200;
 	final int HEIGTH_ESPLOSIONE = 200;
 	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione1.gif"));	
+
+	//INTERFACCIA GRAFICA
+	int statoInterfaccia=0; //0=home, 1=gioco, 2=impostazioni
+	//home
+	final int WIDTH_SFONDO_HOME=1000;
+	final int HEIGTH_SFONDO_HOME=600;
+	final int WIDTH_PULSANTI_HOME=200;
+	final int HEIGTH_PULSANTI_HOME=40;
+	final int WIDTH_RECTANGLE_HOME=250;
+	final int HEIGTH_RECTANGLE_HOME=230;
+
+	Label eTitle=new Label("Space Ship");
+	Button bStartGioco= new Button("Start");
+	Button bResetGioco= new Button("Reset");
+	Button bSettings= new Button("Settings");
+	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("immagine-sfondo-home.png"));
+	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome);
+	Image immagineSfondoHomeTrasparente=new Image(getClass().getResourceAsStream("immagineSfondoHomeTrasparente.png"));
+	ImageView sfondoHomeTrasperente=new ImageView(immagineSfondoHomeTrasparente);
+	Region menu= new Region(); //come u rettangolo ma controllabile maggiormente da CSS
+	//gioco
+	
+	//impostazioni
+	
+	//utili per cambiare le interfaccie nel modo corretto
+	boolean resetGame=true;
+	boolean firstOpen=true;
+	
 	
 	public void start(Stage finestra) {
-
+		
+		//CONFIGURAZIONE SCHERMATA DI GIOCO
 		// settaggi sfondo
 		sfondo.setFitWidth(WIDTH_SFONDO);
 		sfondo.setFitHeight(HEIGTH_SFONDO);
 		sfondo.setLayoutX(0);
 		sfondo.setLayoutY((HEIGTH_SCHERMO - HEIGTH_SFONDO) / 2);
-		interfaccia.getChildren().add(sfondo);
 		sfocatura.setFitWidth(WIDTH_SFOCATURA);
 		sfocatura.setFitHeight(HEIGTH_SFOCATURA);
 		sfocatura.setLayoutX(0);
 		sfocatura.setLayoutY((HEIGTH_SCHERMO - HEIGTH_SFOCATURA) / 2);
-
 		// settaggi oggetti
-		int immagine, posizioneY, rotazione, posizioneX;
+		int immagine, rotazione;
 		for (int n = 0; n < nOggetti; n++) {
-			posizioneY = (int) (Math.random() * (HEIGTH_SCHERMO - DIMENSION_OGGETTI));
-			posizioneX = (int) (Math.random() * WIDTH_SCHERMO);
 			immagine = (int) (Math.random() * vettoreImmagini.length);
 			vettoreOggetti[n] = new ImageView(vettoreImmagini[immagine]);
 			vettoreOggetti[n].setFitHeight(DIMENSION_OGGETTI);
 			vettoreOggetti[n].setFitWidth(DIMENSION_OGGETTI);
-			vettoreOggetti[n].setLayoutX(WIDTH_SCHERMO + posizioneX);
-			vettoreOggetti[n].setLayoutY(posizioneY);
+			riposizionaOggetto(vettoreOggetti[n]);
 			if (immagine != 0) {
 				rotazione = (int) (Math.random() * 270);
 				vettoreOggetti[n].setRotate(rotazione);
 			}
-			interfaccia.getChildren().add(vettoreOggetti[n]);
 		}
-
-		// riempimento munizioni
-		for (int nM = 0; nM < numeroMunizioni; nM++) {
-			Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
-			munizioni[nM] = new ImageView(immagineMissile);
-			munizioni[nM].setFitHeight(HEIGTH_MISSILE);
-			munizioni[nM].setFitWidth(WIDTH_MISSILE);
-			munizioni[nM].setLayoutX(WIDTH_SCHERMO);
-			;
-			interfaccia.getChildren().add(munizioni[nM]);
-		}
-
 		// settaggio navicella
 		navicella.setFitWidth(WIDTH_NAVICELLA);
 		navicella.setFitHeight(HEIGTH_NAVICELLA);
 		navicella.setRotate(90);
 		navicella.setLayoutX(posizioneNaviciella[0]);
 		navicella.setLayoutY(posizioneNaviciella[1]);
-		interfaccia.getChildren().add(navicella);
+//------------------------------------------------------------------------------------------------------------------------------------------------
+		//CONFIGURAZIONE SCHERMATA HOME
+		//settaggio sfondo
+		sfondoHomeFirstOpen.setLayoutY((HEIGTH_SCHERMO-HEIGTH_SFONDO_HOME)/2);
+		sfondoHomeFirstOpen.setLayoutX((WIDTH_SCHERMO-WIDTH_SFONDO_HOME)/2);
+		sfondoHomeTrasperente.setLayoutY((HEIGTH_SCHERMO-HEIGTH_SFONDO_HOME)/2);
+		sfondoHomeTrasperente.setLayoutX((WIDTH_SCHERMO-WIDTH_SFONDO_HOME)/2);
+		
+		//posizionamento pulsanti e menu
+		bStartGioco.getStyleClass().add("buttonHome");
+		bResetGioco.getStyleClass().add("buttonHome");
+		bSettings.getStyleClass().add("buttonHome");
+		menu.getStyleClass().add("menuHome");
+		// il numero aggiunto alla posizione X serve per riallineare i pulsanti con lo sfondo
+		menu.setLayoutX((WIDTH_SCHERMO-WIDTH_RECTANGLE_HOME)/2);
+		menu.setLayoutY((HEIGTH_SCHERMO-HEIGTH_RECTANGLE_HOME)/2);
+		bStartGioco.setLayoutX((WIDTH_SCHERMO-WIDTH_PULSANTI_HOME)/2);
+		bStartGioco.setLayoutY((HEIGTH_SCHERMO-HEIGTH_PULSANTI_HOME)/2-70);
+		bSettings.setLayoutX((WIDTH_SCHERMO-WIDTH_PULSANTI_HOME)/2);
+		bSettings.setLayoutY((HEIGTH_SCHERMO-HEIGTH_PULSANTI_HOME)/2);
+		bResetGioco.setLayoutX((WIDTH_SCHERMO-WIDTH_PULSANTI_HOME)/2);
+		bResetGioco.setLayoutY((HEIGTH_SCHERMO-HEIGTH_PULSANTI_HOME)/2+70);
+		//stile pulsanti
 
-		interfaccia.getChildren().add(sfocatura);
-		Scene scena = new Scene(interfaccia, WIDTH_SCHERMO, HEIGTH_SCHERMO);
+		DropShadow dropShadow = new DropShadow();
+		dropShadow.setBlurType(BlurType.THREE_PASS_BOX);
+		dropShadow.setRadius(10); //raggio di sfocatura
+		dropShadow.setOffsetX(4.0); 
+		dropShadow.setOffsetY(4.0);
+		dropShadow.setSpread(0.1); //densità della sfocatura 
+		dropShadow.setColor(Color.GRAY);
 
+		DropShadow dropShadow1 = new DropShadow();
+		dropShadow1.setBlurType(BlurType.TWO_PASS_BOX);
+		dropShadow1.setRadius(20); //raggio di sfocatura
+		dropShadow1.setSpread(0.4); //densità della sfocatura 
+		dropShadow1.setColor(Color.color(0,0,0.5));
+		
+		bStartGioco.setEffect(dropShadow);
+		bResetGioco.setEffect(dropShadow);
+		bSettings.setEffect(dropShadow);
+		menu.setEffect(dropShadow1);
+		
+		
+		Scene scena = new Scene(schermo, WIDTH_SCHERMO, HEIGTH_SCHERMO);
+		scena.getStylesheets().add("it/edu/iisgubbio/giocoFinale/StyleSpaceShip.css");
+		
+		costruisciInterfaccia(0); //entriamo nella schermata home
+		
+		bStartGioco.setOnAction(e->gestisciInterfaccia(e));
+		bResetGioco.setOnAction(e->gestisciInterfaccia(e));
+		bSettings.setOnAction(e->gestisciInterfaccia(e));
+		
 		scena.setOnKeyPressed(e -> pigiato(e));
 		scena.setOnKeyReleased(e -> rilasciato(e));
 
+		
+		finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
-		finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
 		finestra.show();
 
-		// movimento sfondo
-		muoviSfondo.setCycleCount(Animation.INDEFINITE);
-		muoviSfondo.play();
-		// controlla collisioni
-		controllaCollisione.setCycleCount(Animation.INDEFINITE);
-		controllaCollisione.play();
-		// movimento navicella
-		muoviNavicella.setCycleCount(Animation.INDEFINITE);
-		muoviNavicella.play();
-		// movimento oggetti
-		muoviOggetti.setCycleCount(Animation.INDEFINITE);
-		muoviOggetti.play();
 	}
-
+	
+	public void gestisciInterfaccia(Event pulsante) {
+		int interfaccia=-1;
+		String evento=pulsante.getSource().toString();
+		if(evento.equals(bStartGioco.toString())) {
+			interfaccia=1;
+		}else if(evento.equals(bResetGioco.toString())) {
+			resetGame=true;
+			interfaccia=1;
+		}else if(evento.equals(bSettings.toString())) {
+			interfaccia=2; 
+		}
+		costruisciInterfaccia(interfaccia);
+	}
+	
+	public void costruisciInterfaccia(int interfaccia) {
+		schermo.getChildren().clear();
+		switch(interfaccia) {
+		case 0:
+			//costruiamo la schermata home
+			schermo.getStyleClass().add("pain");
+			
+			if(firstOpen) {
+				schermo.getChildren().add(sfondoHomeFirstOpen);
+				schermo.getChildren().add(menu);
+				schermo.getChildren().add(eTitle);
+				schermo.getChildren().add(bStartGioco);
+				schermo.getChildren().add(bSettings);
+				schermo.getChildren().add(bResetGioco);
+			}else {
+				schermo.getChildren().add(sfondoHomeTrasperente);
+				schermo.getChildren().add(menu);
+				schermo.getChildren().add(eTitle);
+				schermo.getChildren().add(bStartGioco);
+				schermo.getChildren().add(bResetGioco);
+				schermo.getChildren().add(bSettings);
+			}
+			
+			break;
+		case 1:
+			//costruiamo la schermata per il gioco
+			schermo.getChildren().add(sfondo);
+			schermo.getChildren().add(navicella);
+			if(resetGame) {
+				for (int n = 0; n < nOggetti; n++) {
+					schermo.getChildren().add(vettoreOggetti[n]);
+				}
+				// riempimento munizioni
+				for (int nM = 0; nM < numeroMunizioni; nM++) {
+					Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
+					munizioni[nM] = new ImageView(immagineMissile);
+					munizioni[nM].setFitHeight(HEIGTH_MISSILE);
+					munizioni[nM].setFitWidth(WIDTH_MISSILE);
+					munizioni[nM].setLayoutX(WIDTH_SCHERMO);
+					schermo.getChildren().add(munizioni[nM]);
+				}
+			}
+			schermo.getChildren().add(sfocatura);
+			
+			// movimento navicella
+			muoviNavicella.setCycleCount(Animation.INDEFINITE);
+			muoviNavicella.play();
+			// controlla collisioni
+			controllaCollisione.setCycleCount(Animation.INDEFINITE);
+			controllaCollisione.play();
+			// movimento sfondo
+			muoviSfondo.setCycleCount(Animation.INDEFINITE);
+			muoviSfondo.play();
+			// movimento oggetti
+			muoviOggetti.setCycleCount(Animation.INDEFINITE);
+			muoviOggetti.play();
+			break;
+			
+		case 2:
+			//costruiamo la schermata delle impostazioni
+			break;
+		}
+	}
+	
 	public void aggiornaPosizioneSfondo() {
 		posizioneSfondoX -= valoreSpostamentoSfondo;
 		sfondo.setLayoutX(posizioneSfondoX);
@@ -310,7 +449,7 @@ public class Spaceship extends Application {
 					ImageView esplosione = new ImageView(animazioneEsplosione);
 					esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
 					esplosione.setFitWidth(WIDTH_ESPLOSIONE);
-					interfaccia.getChildren().add(esplosione);
+					schermo.getChildren().add(esplosione);
 					esplosione.setLayoutX(((posizioneXMissile + posizioneXMeteorie) / 2) - WIDTH_ESPLOSIONE / 2);
 					esplosione.setLayoutY(posizioneYMissile - HEIGTH_ESPLOSIONE / 2);
 					rimuoviOggetto(500, esplosione);
@@ -329,7 +468,7 @@ public class Spaceship extends Application {
 	}
 
 	public void eseguiRimozione(ImageView oggetto) {
-		interfaccia.getChildren().remove(oggetto);
+		schermo.getChildren().remove(oggetto);
 	}
 
 	public static void main(String[] args) {
