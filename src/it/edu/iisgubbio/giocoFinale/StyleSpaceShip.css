@@ -1,3 +1,9 @@
+/*font utilizzati nel gioco*/
+@font-face {
+	font-family: SPACE;
+    src: url('SPACE.ttf');
+}
+
 .pain{
 	-fx-background-color: black;
 }
@@ -7,22 +13,37 @@
 	-fx-background-color: rgba(128,128,128,0.5);
 	-fx-text-fill: white;
 	-fx-font-weight: bold;
-	-fx-font-size: 20px;
+	-fx-font-family: SPACE;
+	-fx-font-size: 15;
 	-fx-padding: 3;
+	-fx-border-radius: 23;
 	-fx-background-radius: 23;
 }
 .buttonHome:hover{
 	-fx-pref-width: 200;
 	-fx-pref-height: 40;
 	-fx-padding: 0;
-	-fx-font-size: 22;
+	-fx-font-family: SPACE;
+	-fx-font-size: 19;
 	-fx-background-color: rgba(128,128,128,0.7);
 	-fx-pref-width: 205;
 	-fx-pref-height: 45;
 }
 .menuHome{
-	-fx-pref-width: 250;
-	-fx-pref-height: 230;
-	-fx-background-color: rgba(0,0,160,0.8);
+	-fx-pref-width: 275;
+	-fx-pref-height: 300;
+	-fx-background-color: rgb(128, 0, 255);
 	-fx-background-radius: 23;
+}
+.titleHome{
+	-fx-pref-width: 250;
+	-fx-pref-height: 50;
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-font-size: 25px;
+	-fx-font-family: SPACE;
+	-fx-font-weight: bold;
+	-fx-alignment: center;
+}
+.sfondoHomeTrasparente{
+	-fx-fill: rgba(0, 0, 0,0.2);
 }
