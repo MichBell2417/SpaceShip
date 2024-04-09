@@ -25,8 +25,9 @@ public class Spaceship extends Application {
 	/* TODO: aggiungere vettore per gli sfondi di ciascun livello del gioco
 	 * TODO: inserire la vita agli oggetti
 	 * TODO: fare collisione navicella oggetti
-	 * TODO: aggiungere musica epica
 	 * TODO: costruire e far funzionare l'interfaccia delle impostazioni
+	 * TODO: creare interfaccia gioco
+	 * TODO: aggiungere musica epica
 	 * TODO: aggiungere suoni al gioco
 	 */
 	// SCHERMO
