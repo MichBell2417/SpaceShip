@@ -47,3 +47,10 @@
 .sfondoHomeTrasparente{
 	-fx-fill: rgba(0, 0, 0,0.2);
 }
+.menuInformazioniGioco {
+	-fx-pref-width: 500;
+	-fx-pref-height: 100;
+	-fx-background-color: rgba(128, 0, 255, 0.5);
+	-fx-background-radius: 10;
+	
+}

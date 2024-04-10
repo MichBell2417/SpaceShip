@@ -17,6 +17,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -104,6 +105,9 @@ public class Spaceship extends Application {
 
 	//INTERFACCIA GRAFICA
 	int statoInterfaccia=0; //0=home, 1=gioco, 2=impostazioni
+	//in comune:
+	Button bHome= new Button("HOME");
+	
 	//home
 	final int WIDTH_SFONDO_HOME=1000;
 	final int HEIGTH_SFONDO_HOME=600;
@@ -119,7 +123,6 @@ public class Spaceship extends Application {
 	Button bStartGioco= new Button("Start");
 	Button bResetGioco= new Button("Reset");
 	Button bSettings= new Button("Settings");
-	Button bHome= new Button("HOME");
 	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("videoSfondoHome.gif"));
 	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome);
 	/*
@@ -129,7 +132,23 @@ public class Spaceship extends Application {
 	*/
 	Rectangle sfondoHomeTrasperente= new Rectangle(WIDTH_SCHERMO, HEIGTH_SCHERMO);
 	Region menu= new Region(); //come u rettangolo ma controllabile maggiormente da CSS
+	
 	//gioco
+	final int WIDTH_MENU_INFORMAZIONI=500;
+	final int HEIGTH_MENU_INFORMAZIONI=100;
+	final int POSIZIONAMENTO_ASSE_Y_MENU=-20;
+	final int POSIZIONE_X_SEPARATORE1=167+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
+	final int POSIZIONE_X_SEPARATORE2=167*2+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
+	
+	
+	Region informazioni= new Region();
+	Label ePunti= new Label("PUNTI");
+	Label eVite= new Label("VITE");
+	Label eNumeroPunti= new Label("0");
+	//Button bHome= new Button("HOME"); fatto prima
+	Line separaInformazioni1= new Line(POSIZIONE_X_SEPARATORE1,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE1, 100+POSIZIONAMENTO_ASSE_Y_MENU);
+	Line separaInformazioni2= new Line(POSIZIONE_X_SEPARATORE2,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE2, 100+POSIZIONAMENTO_ASSE_Y_MENU);
+	
 	
 	//impostazioni
 	
@@ -169,6 +188,13 @@ public class Spaceship extends Application {
 		navicella.setRotate(90);
 		navicella.setLayoutX(posizioneNaviciella[0]);
 		navicella.setLayoutY(posizioneNaviciella[1]);
+		//settaggio menu informazioni
+		informazioni.getStyleClass().add("menuInformazioniGioco");
+		informazioni.setLayoutX((WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2);
+		informazioni.setLayoutY(POSIZIONAMENTO_ASSE_Y_MENU);
+
+		//
+		
 //------------------------------------------------------------------------------------------------------------------------------------------------
 		//CONFIGURAZIONE SCHERMATA HOME
 		//settaggio sfondo
@@ -215,6 +241,11 @@ public class Spaceship extends Application {
 		eTitle.setLayoutY((HEIGTH_SCHERMO-HEIGTH_TITOLO_HOME)/2-130+OFFSET_Y_OGGETTI_MENU);
 		eTitle.getStyleClass().add("titleHome");
 		eTitle.setEffect(dropShadow);
+		
+//------------------------------------------------------------------------------------------------------------------------------------------------
+		//CONFIGURAZIONE SCHERMATA IMPOSTAZIONI
+		
+		
 		
 		Scene scena = new Scene(schermo, WIDTH_SCHERMO, HEIGTH_SCHERMO);
 		scena.getStylesheets().add("it/edu/iisgubbio/giocoFinale/StyleSpaceShip.css");
@@ -315,8 +346,15 @@ public class Spaceship extends Application {
 					schermo.getChildren().add(munizioni[nM]);
 				}
 			}
-				
 			schermo.getChildren().add(sfocatura);
+			
+			//costruiamo il menu delle informazioni
+			schermo.getChildren().add(informazioni);
+			schermo.getChildren().add(separaInformazioni1);
+			schermo.getChildren().add(separaInformazioni2);
+			schermo.getChildren().add(ePunti);
+			schermo.getChildren().add(eNumeroPunti);
+			schermo.getChildren().add(eVite);
 			schermo.getChildren().add(bHome);
 			
 			// movimento navicella
