@@ -59,6 +59,8 @@ public class Spaceship extends Application {
 	Image immagineMeteoriteViola = new Image(getClass().getResourceAsStream("MeteoriteViola.png"));
 	Image vettoreImmagini[] = { immagineUfo, immagineMeteoriteBlu, immagineMeteoriteViola };
 	ImageView vettoreOggetti[] = new ImageView[nOggetti];
+	int vettoreViteOggettiRimaste[]= new int[nOggetti]; //le vite in un indice corrispondo alle vite dell'oggetto che si trova nello stesso indice nel vettore vettoreOggetti
+	int vettoreViteOggettiStandard[]= new int[nOggetti];
 	// spostamento oggetti
 	ImageView oggettoAttuale;
 	int indiceOggetto = 0;
@@ -81,12 +83,16 @@ public class Spaceship extends Application {
 	// MUNIZIONI
 	final int WIDTH_MISSILE = 60;
 	final int HEIGTH_MISSILE = 30;
-	int numeroMunizioni = 1000;
+	int numeroMunizioni = 20;
+	int numeroMunizioniAttuali= numeroMunizioni;
 	int munizioniUtilizzate = 0;
 	ImageView[] munizioni = new ImageView[numeroMunizioni];
 	// spawn missile
 	int precedente = 0;
 	long tempoScorsoMissile;
+	
+	//PUNTEGGIO
+	int punteggioAttuale=0;
 
 	// colisioni oggetto misile
 	int numeroOggettoBound = 0;
@@ -136,21 +142,32 @@ public class Spaceship extends Application {
 	//gioco
 	final int WIDTH_MENU_INFORMAZIONI=500;
 	final int HEIGTH_MENU_INFORMAZIONI=100;
+	final int WIDTH_TESTO_INFORMAZIONI=100;
+	final int HEIGTH_TESTO_INFORMAZIONI=30;
+	final int WIDTH_PULSANTE_INFORMAZIONI=100;
+	final int HEIGTH_PULSANTE_INFORMAZIONI=40;
 	final int POSIZIONAMENTO_ASSE_Y_MENU=-20;
-	final int POSIZIONE_X_SEPARATORE1=167+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
-	final int POSIZIONE_X_SEPARATORE2=167*2+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
+	final int POSIZIONAMENTO_ASSE_X_MENU=(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
+	final int OFFSET_ELEMENTI_MENU=WIDTH_MENU_INFORMAZIONI/4;
+	final int POSIZIONE_X_SEPARATORE1=OFFSET_ELEMENTI_MENU+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
+	final int POSIZIONE_X_SEPARATORE2=OFFSET_ELEMENTI_MENU*2+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
+	final int POSIZIONE_X_SEPARATORE3=OFFSET_ELEMENTI_MENU*3+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
 	
+	boolean bianco=true;
 	
 	Region informazioni= new Region();
 	Label ePunti= new Label("PUNTI");
 	Label eVite= new Label("VITE");
-	Label eNumeroPunti= new Label("0");
+	Label eNumeroPunti= new Label(""+punteggioAttuale);
+	Label eMunizioni= new Label("MUNIZIONI");
+	Label eNumeroMunizioni= new Label(""+numeroMunizioniAttuali);
 	//Button bHome= new Button("HOME"); fatto prima
 	Line separaInformazioni1= new Line(POSIZIONE_X_SEPARATORE1,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE1, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	Line separaInformazioni2= new Line(POSIZIONE_X_SEPARATORE2,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE2, 100+POSIZIONAMENTO_ASSE_Y_MENU);
-	
+	Line separaInformazioni3= new Line(POSIZIONE_X_SEPARATORE3,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE3, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	
 	//impostazioni
+	
 	
 	//utili per cambiare le interfaccie nel modo corretto
 	boolean resetGame=true;
@@ -158,7 +175,18 @@ public class Spaceship extends Application {
 	
 	
 	public void start(Stage finestra) {
-		
+		//definiamo degli effetti
+		DropShadow dropShadow = new DropShadow();
+		dropShadow.setBlurType(BlurType.THREE_PASS_BOX);
+		dropShadow.setRadius(15); //raggio di sfocatura
+		dropShadow.setSpread(0.5); //densità della sfocatura 
+		dropShadow.setColor(Color.GRAY);
+		DropShadow dropShadow1 = new DropShadow();
+		dropShadow1.setBlurType(BlurType.TWO_PASS_BOX);
+		dropShadow1.setRadius(30); //raggio di sfocatura
+		dropShadow1.setSpread(0.7); //densità della sfocatura 
+		dropShadow1.setColor(Color.color(0.4,0,0.8));
+	//--------------------------------------------------------------------------------------------------------------------------------
 		//CONFIGURAZIONE SCHERMATA DI GIOCO
 		// settaggi sfondo
 		sfondo.setFitWidth(WIDTH_SFONDO);
@@ -180,6 +208,11 @@ public class Spaceship extends Application {
 			if (immagine != 0) {
 				rotazione = (int) (Math.random() * 270);
 				vettoreOggetti[n].setRotate(rotazione);
+				vettoreViteOggettiRimaste[n]=2;
+				vettoreViteOggettiStandard[n]=2;
+			}else { //è un ufo
+				vettoreViteOggettiRimaste[n]=3;
+				vettoreViteOggettiStandard[n]=3;
 			}
 		}
 		// settaggio navicella
@@ -190,10 +223,28 @@ public class Spaceship extends Application {
 		navicella.setLayoutY(posizioneNaviciella[1]);
 		//settaggio menu informazioni
 		informazioni.getStyleClass().add("menuInformazioniGioco");
-		informazioni.setLayoutX((WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2);
+		informazioni.setEffect(dropShadow1);
+		ePunti.getStyleClass().add("testoMenuInformazioni");
+		eNumeroPunti.getStyleClass().add("testoMenuInformazioni");
+		eVite.getStyleClass().add("testoMenuInformazioni");
+		eMunizioni.getStyleClass().add("testoMenuInformazioni");
+		eNumeroMunizioni.getStyleClass().add("testoMenuInformazioni");
+		bHome.getStyleClass().add("pulsanteMenuInformazioni");
+		informazioni.setLayoutX(POSIZIONAMENTO_ASSE_X_MENU);
 		informazioni.setLayoutY(POSIZIONAMENTO_ASSE_Y_MENU);
-
-		//
+		ePunti.setLayoutX(POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
+		ePunti.setLayoutY(5);
+		eNumeroPunti.setLayoutX(POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
+		eNumeroPunti.setLayoutY(35);
+		eVite.setLayoutX(OFFSET_ELEMENTI_MENU+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
+		eVite.setLayoutY(5);
+		eMunizioni.setLayoutX(OFFSET_ELEMENTI_MENU*2+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
+		eMunizioni.setLayoutY(5);
+		eNumeroMunizioni.setLayoutX(OFFSET_ELEMENTI_MENU*2+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
+		eNumeroMunizioni.setLayoutY(35);
+		bHome.setLayoutX(OFFSET_ELEMENTI_MENU*3+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_PULSANTE_INFORMAZIONI)/2);
+		bHome.setLayoutY((HEIGTH_MENU_INFORMAZIONI+POSIZIONAMENTO_ASSE_Y_MENU-HEIGTH_PULSANTE_INFORMAZIONI)/2);
+		bHome.setEffect(dropShadow);
 		
 //------------------------------------------------------------------------------------------------------------------------------------------------
 		//CONFIGURAZIONE SCHERMATA HOME
@@ -205,7 +256,6 @@ public class Spaceship extends Application {
 		sfondoHomeTrasperente.getStyleClass().add("sfondoHomeTrasparente");
 		sfondoHomeTrasperente.setLayoutY((HEIGTH_SCHERMO-HEIGTH_SFONDO_HOME)/2);
 		sfondoHomeTrasperente.setLayoutX((WIDTH_SCHERMO-WIDTH_SFONDO_HOME)/2);
-		
 		//posizionamento pulsanti e menu
 		// il numero aggiunto alla posizione X serve per riallineare i pulsanti con lo sfondo
 		menu.setLayoutX((WIDTH_SCHERMO-WIDTH_RECTANGLE_HOME)/2);
@@ -221,16 +271,6 @@ public class Spaceship extends Application {
 		bResetGioco.getStyleClass().add("buttonHome");
 		bSettings.getStyleClass().add("buttonHome");
 		menu.getStyleClass().add("menuHome");
-		DropShadow dropShadow = new DropShadow();
-		dropShadow.setBlurType(BlurType.THREE_PASS_BOX);
-		dropShadow.setRadius(15); //raggio di sfocatura
-		dropShadow.setSpread(0.5); //densità della sfocatura 
-		dropShadow.setColor(Color.GRAY);
-		DropShadow dropShadow1 = new DropShadow();
-		dropShadow1.setBlurType(BlurType.TWO_PASS_BOX);
-		dropShadow1.setRadius(30); //raggio di sfocatura
-		dropShadow1.setSpread(0.7); //densità della sfocatura 
-		dropShadow1.setColor(Color.color(0.4,0,0.8));
 		bStartGioco.setEffect(dropShadow);
 		bResetGioco.setEffect(dropShadow);
 		bSettings.setEffect(dropShadow);
@@ -305,6 +345,7 @@ public class Spaceship extends Application {
 				schermo.getChildren().add(bResetGioco);
 				firstOpen=false;
 			}else {
+				schermo.getChildren().add(sfondoHomeFirstOpen);
 				schermo.getChildren().add(sfondoHomeTrasperente);
 				schermo.getChildren().add(menu);
 				schermo.getChildren().add(eTitle);
@@ -312,7 +353,6 @@ public class Spaceship extends Application {
 				schermo.getChildren().add(bResetGioco);
 				schermo.getChildren().add(bSettings);
 			}
-			
 			break;
 		case 1:
 			//costruiamo la schermata per il gioco
@@ -322,6 +362,8 @@ public class Spaceship extends Application {
 				//nel caso si sia in modalità di reset
 				posizioneSfondoX = 0;
 				munizioniUtilizzate=0;
+				punteggioAttuale=0;
+				eNumeroPunti.setText(""+punteggioAttuale);
 				// riempimento munizioni
 				for (int nM = 0; nM < numeroMunizioni; nM++) {
 					Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
@@ -334,6 +376,7 @@ public class Spaceship extends Application {
 				}
 				for (int n = 0; n < nOggetti; n++) {
 					riposizionaOggetto(vettoreOggetti[n]);
+					vettoreViteOggettiRimaste[n]=vettoreViteOggettiStandard[n];
 					schermo.getChildren().add(vettoreOggetti[n]);
 				}
 				resetGame=false;
@@ -352,9 +395,12 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(informazioni);
 			schermo.getChildren().add(separaInformazioni1);
 			schermo.getChildren().add(separaInformazioni2);
+			schermo.getChildren().add(separaInformazioni3);
 			schermo.getChildren().add(ePunti);
 			schermo.getChildren().add(eNumeroPunti);
 			schermo.getChildren().add(eVite);
+			schermo.getChildren().add(eMunizioni);
+			schermo.getChildren().add(eNumeroMunizioni);
 			schermo.getChildren().add(bHome);
 			
 			// movimento navicella
@@ -386,6 +432,18 @@ public class Spaceship extends Application {
 		posizioneSfondoX -= valoreSpostamentoSfondo;
 		sfondo.setLayoutX(posizioneSfondoX);
 		sfocatura.setLayoutX(posizioneFinaleSfondo - WIDTH_SFOCATURA / 2);
+		
+		//approfittamo dello spostamento dello sfondo per far anche cambiare colore al numero di munizioni quando è zero
+		if(System.currentTimeMillis() - tempoScorsoMissile >= 500 && numeroMunizioniAttuali==0) {
+			if(bianco) {
+				eNumeroMunizioni.setTextFill(Color.WHITE);
+				bianco=false;
+			}else {
+				eNumeroMunizioni.setTextFill(Color.RED);
+				bianco=true;
+			}
+			tempoScorsoMissile = System.currentTimeMillis();
+		}
 	}
 
 	public void spostaOggetti() {
@@ -412,21 +470,30 @@ public class Spaceship extends Application {
 	}
 
 	public void spara() {
-		if (System.currentTimeMillis() - tempoScorsoMissile >= 100) {
-			if (munizioniUtilizzate == numeroMunizioni) {
-				
-			} else {
-				munizioni[munizioniUtilizzate].setLayoutY(navicella.getLayoutY() + (HEIGTH_NAVICELLA / 2 - HEIGTH_MISSILE / 2));
-				munizioni[munizioniUtilizzate].setLayoutX(navicella.getLayoutX() + WIDTH_NAVICELLA - WIDTH_MISSILE);
-				munizioniUtilizzate++;
-				precedente = munizioniUtilizzate - 1;
-				tempoScorsoMissile = System.currentTimeMillis();
+		if (System.currentTimeMillis() - tempoScorsoMissile >= 100 && numeroMunizioniAttuali!=0) {
+			if (numeroMunizioniAttuali<=10 && numeroMunizioniAttuali>5) {
+				eNumeroMunizioni.setTextFill(Color.ORANGE);
+			}else if(numeroMunizioniAttuali<=5) {
+				eNumeroMunizioni.setTextFill(Color.RED);
 			}
+			munizioni[munizioniUtilizzate].setLayoutY(navicella.getLayoutY() + (HEIGTH_NAVICELLA / 2 - HEIGTH_MISSILE / 2));
+			munizioni[munizioniUtilizzate].setLayoutX(navicella.getLayoutX() + WIDTH_NAVICELLA - WIDTH_MISSILE);
+			munizioniUtilizzate++;
+			numeroMunizioniAttuali=numeroMunizioni-munizioniUtilizzate;
+			precedente = munizioniUtilizzate - 1;
+			tempoScorsoMissile = System.currentTimeMillis();
+			eNumeroMunizioni.setText(""+numeroMunizioniAttuali);
+			
 		}
+		//System.out.println("sparato");
 	}
 
 	public void pigiato(KeyEvent pulsante) {
+		//System.out.println(pulsante.getText());
 		switch (pulsante.getText().toLowerCase()) {
+		case "p": //TODO: domandare la prof PERCHE LA Q, LO SPAZIO FUNZIONANO QUANDO CI SONO ALTRI PULSANTI PIGIATI MA LA P NO?
+			spara();
+			break;
 		case "w":
 			spostaSU = true;
 			break;
@@ -439,9 +506,7 @@ public class Spaceship extends Application {
 		case "a":
 			spostaINDIETRO = true;
 			break;
-		case "p":
-			spara();
-			break;
+		
 		}
 	}
 
@@ -474,12 +539,12 @@ public class Spaceship extends Application {
 			posizioneNaviciella[1] += valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
 		}
-		if (spostaAVANTI && navicella.getLayoutX() <= WIDTH_SCHERMO - HEIGTH_NAVICELLA) {
-			posizioneNaviciella[0] += valoreSpostamentoNavicella;
-			navicella.setLayoutX(posizioneNaviciella[0]);
-		}
 		if (spostaINDIETRO && navicella.getLayoutX() >= 0) {
 			posizioneNaviciella[0] -= valoreSpostamentoNavicella;
+			navicella.setLayoutX(posizioneNaviciella[0]);
+		}
+		if (spostaAVANTI && navicella.getLayoutX() <= WIDTH_SCHERMO - HEIGTH_NAVICELLA) {
+			posizioneNaviciella[0] += valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 		}
 	}
@@ -507,10 +572,25 @@ public class Spaceship extends Application {
 					int posizioneXMissile, posizioneXMeteorie, posizioneYMissile;
 					// prendiamo le posizione del missile e gli oggetti
 					posizioneXMissile = (int) (missileSottopostoBound.getLayoutX() + WIDTH_MISSILE);
-					posizioneXMeteorie = (int) (oggettoSottopostoBound.getLayoutX());
 					posizioneYMissile = (int) (missileSottopostoBound.getLayoutY());
+					posizioneXMeteorie = (int) (oggettoSottopostoBound.getLayoutX());
 					// spostiamo il missile eli oggetti
-					riposizionaOggetto(oggettoSottopostoBound);
+					vettoreViteOggettiRimaste[numeroOggettoBound]--; //scaliamo la vita all'oggetto colpito
+					System.out.println(vettoreViteOggettiRimaste[numeroOggettoBound]);
+					if(vettoreViteOggettiRimaste[numeroOggettoBound]==0) {
+						riposizionaOggetto(oggettoSottopostoBound);
+						vettoreViteOggettiRimaste[numeroOggettoBound]=vettoreViteOggettiStandard[numeroOggettoBound];
+						punteggioAttuale+=vettoreViteOggettiStandard[numeroOggettoBound]*10;
+						eNumeroPunti.setText(""+punteggioAttuale);
+						// posizioniamo l'esplosione
+						ImageView esplosione = new ImageView(animazioneEsplosione);
+						esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
+						esplosione.setFitWidth(WIDTH_ESPLOSIONE);
+						schermo.getChildren().add(esplosione);
+						esplosione.setLayoutX(((posizioneXMissile + posizioneXMeteorie) / 2) - WIDTH_ESPLOSIONE / 2);
+						esplosione.setLayoutY(posizioneYMissile - HEIGTH_ESPLOSIONE / 2);
+						rimuoviOggetto(500, esplosione);
+					}
 					rimuoviOggetto(10, missileSottopostoBound); // spostiamo il missile ad una posizione fuori dalla
 																// portata degli oggetti
 					numeriMunizioniEsaurite[i] = true;
@@ -522,21 +602,14 @@ public class Spaceship extends Application {
 					 * posizioneYMissile+HEIGTH_ESPLOSIONE/2));
 					 * System.out.println("questa è la "+conta+" volta che compare l'esplosione");
 					 */
-					// posizioniamo l'esplosione
-					ImageView esplosione = new ImageView(animazioneEsplosione);
-					esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
-					esplosione.setFitWidth(WIDTH_ESPLOSIONE);
-					schermo.getChildren().add(esplosione);
-					esplosione.setLayoutX(((posizioneXMissile + posizioneXMeteorie) / 2) - WIDTH_ESPLOSIONE / 2);
-					esplosione.setLayoutY(posizioneYMissile - HEIGTH_ESPLOSIONE / 2);
-					rimuoviOggetto(500, esplosione);
+					
 				}
 			}
 		}
 		// long end = System.nanoTime();
 		// System.out.println("c'ho messo "+(end-start));
 	}
-
+	
 	public void rimuoviOggetto(int traQuantoTempo, ImageView oggetto) {
 		Timeline eliminaOggetto;
 		eliminaOggetto = new Timeline(new KeyFrame(Duration.millis(traQuantoTempo), x -> eseguiRimozione(oggetto)));
