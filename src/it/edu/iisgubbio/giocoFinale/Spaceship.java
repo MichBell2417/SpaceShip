@@ -146,6 +146,8 @@ public class Spaceship extends Application {
 	final int HEIGTH_TESTO_INFORMAZIONI=30;
 	final int WIDTH_PULSANTE_INFORMAZIONI=100;
 	final int HEIGTH_PULSANTE_INFORMAZIONI=40;
+	final int DIMENSIONI_IMMAGINE_CUORE_INFORMAZIONI=35;
+	
 	final int POSIZIONAMENTO_ASSE_Y_MENU=-20;
 	final int POSIZIONAMENTO_ASSE_X_MENU=(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
 	final int OFFSET_ELEMENTI_MENU=WIDTH_MENU_INFORMAZIONI/4;
@@ -154,6 +156,9 @@ public class Spaceship extends Application {
 	final int POSIZIONE_X_SEPARATORE3=OFFSET_ELEMENTI_MENU*3+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
 	
 	boolean bianco=true;
+	
+	int numeroVite=3;
+	int viteRimaste=numeroVite;
 	
 	Region informazioni= new Region();
 	Label ePunti= new Label("PUNTI");
@@ -165,6 +170,9 @@ public class Spaceship extends Application {
 	Line separaInformazioni1= new Line(POSIZIONE_X_SEPARATORE1,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE1, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	Line separaInformazioni2= new Line(POSIZIONE_X_SEPARATORE2,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE2, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	Line separaInformazioni3= new Line(POSIZIONE_X_SEPARATORE3,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE3, 100+POSIZIONAMENTO_ASSE_Y_MENU);
+	//immagini per vita
+	Image imamgineCuoreVita=new Image(getClass().getResourceAsStream("immagineCuroePerVite.png"));
+	ImageView vettoreCuori[]= new ImageView[numeroVite]; //3 vite
 	
 	//impostazioni
 	
@@ -238,6 +246,13 @@ public class Spaceship extends Application {
 		eNumeroPunti.setLayoutY(35);
 		eVite.setLayoutX(OFFSET_ELEMENTI_MENU+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
 		eVite.setLayoutY(5);
+		for(int i=0; i<vettoreCuori.length; i++) {
+			vettoreCuori[i]=new ImageView(imamgineCuoreVita);
+			vettoreCuori[i].setLayoutX(35*i+OFFSET_ELEMENTI_MENU+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
+			vettoreCuori[i].setLayoutY(35);
+			vettoreCuori[i].setFitHeight(DIMENSIONI_IMMAGINE_CUORE_INFORMAZIONI);
+			vettoreCuori[i].setFitWidth(DIMENSIONI_IMMAGINE_CUORE_INFORMAZIONI);
+		}
 		eMunizioni.setLayoutX(OFFSET_ELEMENTI_MENU*2+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
 		eMunizioni.setLayoutY(5);
 		eNumeroMunizioni.setLayoutX(OFFSET_ELEMENTI_MENU*2+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_TESTO_INFORMAZIONI)/2);
@@ -364,6 +379,8 @@ public class Spaceship extends Application {
 				munizioniUtilizzate=0;
 				punteggioAttuale=0;
 				eNumeroPunti.setText(""+punteggioAttuale);
+				numeroMunizioniAttuali=numeroMunizioni;
+				eNumeroMunizioni.setText(""+numeroMunizioniAttuali);
 				// riempimento munizioni
 				for (int nM = 0; nM < numeroMunizioni; nM++) {
 					Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
@@ -399,6 +416,9 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(ePunti);
 			schermo.getChildren().add(eNumeroPunti);
 			schermo.getChildren().add(eVite);
+			for(int i=0; i<vettoreCuori.length; i++) {
+				schermo.getChildren().add(vettoreCuori[i]);
+			}
 			schermo.getChildren().add(eMunizioni);
 			schermo.getChildren().add(eNumeroMunizioni);
 			schermo.getChildren().add(bHome);
@@ -491,7 +511,7 @@ public class Spaceship extends Application {
 	public void pigiato(KeyEvent pulsante) {
 		//System.out.println(pulsante.getText());
 		switch (pulsante.getText().toLowerCase()) {
-		case "p": //TODO: domandare la prof PERCHE LA Q, LO SPAZIO FUNZIONANO QUANDO CI SONO ALTRI PULSANTI PIGIATI MA LA P NO?
+		case "p":
 			spara();
 			break;
 		case "w":
@@ -506,7 +526,6 @@ public class Spaceship extends Application {
 		case "a":
 			spostaINDIETRO = true;
 			break;
-		
 		}
 	}
 
@@ -574,9 +593,8 @@ public class Spaceship extends Application {
 					posizioneXMissile = (int) (missileSottopostoBound.getLayoutX() + WIDTH_MISSILE);
 					posizioneYMissile = (int) (missileSottopostoBound.getLayoutY());
 					posizioneXMeteorie = (int) (oggettoSottopostoBound.getLayoutX());
-					// spostiamo il missile eli oggetti
+					// spostiamo il missile e gli oggetti
 					vettoreViteOggettiRimaste[numeroOggettoBound]--; //scaliamo la vita all'oggetto colpito
-					System.out.println(vettoreViteOggettiRimaste[numeroOggettoBound]);
 					if(vettoreViteOggettiRimaste[numeroOggettoBound]==0) {
 						riposizionaOggetto(oggettoSottopostoBound);
 						vettoreViteOggettiRimaste[numeroOggettoBound]=vettoreViteOggettiStandard[numeroOggettoBound];
