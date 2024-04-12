@@ -1,3 +1,30 @@
+
+/*costanti globali devono corrispondere a quelle in java nel codice principale*/ 
+.root {
+	/*pulsante menu home*/
+	-WIDTH_PULSANTI_HOME: 200;
+	-HEIGTH_PULSANTI_HOME:40;
+	/* dimensioni sfondo menu home */
+	-WIDTH_RECTANGLE_HOME:275;
+	-HEIGTH_RECTANGLE_HOME:300;
+	/* dimensioni titolo menu home */
+	-WIDTH_TITOLO_HOME:250;
+	-HEIGTH_TITOLO_HOME:50;
+	
+	/* dimensioni menu informazioni in gioco */
+	-WIDTH_MENU_INFORMAZIONI:500;
+	-HEIGTH_MENU_INFORMAZIONI:100;
+	/* dimensioni testo informazioni in gioco */
+	-WIDTH_TESTO_INFORMAZIONI:100;
+	-HEIGTH_TESTO_INFORMAZIONI:30;
+	/* dimensioni pulsante menu informazioni */
+	-WIDTH_PULSANTE_INFORMAZIONI: 100;
+	-HEIGTH_PULSANTE_INFORMAZIONI: 40;
+	/* dimensioni cuore vita menu informazioni */
+	-DIMENSIONI_IMMAGINE_CUORE_INFORMAZIONI:20;
+	
+}
+
 /*font utilizzati nel gioco*/
 @font-face {
 	font-family: SPACE;
@@ -8,9 +35,9 @@
 	-fx-background-color: black;
 }
 .buttonHome{
-	-fx-pref-width: 200;
-	-fx-pref-height: 40;
-	-fx-background-color: rgba(128,128,128,0.5);
+	-fx-pref-width: -WIDTH_PULSANTI_HOME;
+	-fx-pref-height: -HEIGTH_PULSANTI_HOME;
+	-fx-background-color: rgba(128,128,128,0.4);
 	-fx-text-fill: white;
 	-fx-font-weight: bold;
 	-fx-font-family: SPACE;
@@ -20,24 +47,22 @@
 	-fx-background-radius: 23;
 }
 .buttonHome:hover{
-	-fx-pref-width: 200;
-	-fx-pref-height: 40;
 	-fx-padding: 0;
 	-fx-font-family: SPACE;
 	-fx-font-size: 19;
 	-fx-background-color: rgba(128,128,128,0.7);
-	-fx-pref-width: 205;
-	-fx-pref-height: 45;
+	-fx-pref-width: -WIDTH_PULSANTI_HOME+5;
+	-fx-pref-height: -HEIGTH_PULSANTI_HOME+5;
 }
 .menuHome{
-	-fx-pref-width: 275;
-	-fx-pref-height: 300;
-	-fx-background-color: rgb(128, 0, 255);
+	-fx-pref-width: -WIDTH_RECTANGLE_HOME;
+	-fx-pref-height: -HEIGTH_RECTANGLE_HOME;
+	-fx-background-color: rgba(128, 0, 255,0.5);
 	-fx-background-radius: 23;
 }
 .titleHome{
-	-fx-pref-width: 250;
-	-fx-pref-height: 50;
+	-fx-pref-width: -WIDTH_TITOLO_HOME;
+	-fx-pref-height: -HEIGTH_TITOLO_HOME;
 	-fx-text-fill: rgb(255, 255, 255);
 	-fx-font-size: 25px;
 	-fx-font-family: SPACE;
@@ -46,4 +71,41 @@
 }
 .sfondoHomeTrasparente{
 	-fx-fill: rgba(0, 0, 0,0.2);
+}
+.menuInformazioniGioco {
+	-fx-pref-width: -WIDTH_MENU_INFORMAZIONI;
+	-fx-pref-height: -HEIGTH_MENU_INFORMAZIONI;
+	-fx-background-color: rgba(128, 128, 255, 0.4);
+	-fx-background-radius: 10;
+	
+}
+.testoMenuInformazioni{
+	-fx-pref-width:	-WIDTH_TESTO_INFORMAZIONI;
+	-fx-pref-height:-HEIGTH_TESTO_INFORMAZIONI;
+	-fx-font-family: SPACE;
+	-fx-font-weight: bold;
+	-fx-font-size: 15;
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-alignment: center;
+	
+}
+.pulsanteMenuInformazioni{
+	-fx-pref-width:	-WIDTH_PULSANTE_INFORMAZIONI;
+	-fx-pref-height:-HEIGTH_PULSANTE_INFORMAZIONI;
+	-fx-background-color: rgba(128,128,128);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-family: SPACE;
+	-fx-font-size: 15;
+	-fx-padding: 3;
+	-fx-border-radius: 23;
+	-fx-background-radius: 23;
+}
+.pulsanteMenuInformazioni:hover{
+	-fx-background-color: rgba(192, 192, 192);
+	-fx-font-family: SPACE;
+	-fx-font-size: 17;
+	-fx-padding: 3;
+	-fx-border-radius: 23;
+	-fx-background-radius: 23;
 }

@@ -13,7 +13,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -40,7 +39,7 @@ public class collisioneOggettoNavicella extends Application{
 		      x -> aggiornaPosizioneNavicella()));
 								 //a causa della rotazione di novanta gradi
 	
-	//ELLISSI PER COLLISIONI
+	//ELLISSI E CERCHI PER COLLISIONI
 	final int RADIUS_WIDTH_ELLISSE_VERT = 30;
 	final int RADIUS_HEIGTH_ELLISSE_VERT = 101;
 	final int POS_X_ELLISSE_VERTICALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
@@ -52,6 +51,8 @@ public class collisioneOggettoNavicella extends Application{
 	final int POS_X_ELLISSE_ORIZZONTALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
 	final int POS_Y_ELLISSE_ORIZZONTALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
 	Ellipse ellisseOriz = new Ellipse (POS_X_ELLISSE_ORIZZONTALE,POS_Y_ELLISSE_ORIZZONTALE,RADIUS_WIDTH_ELLISSE_ORIZ,RADIUS_HEIGTH_ELLISSE_ORIZ);
+	
+	Circle CerchioAsteroideColl = new Circle();
 	
 	
 	//OGGETTI
