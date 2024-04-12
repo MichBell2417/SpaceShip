@@ -120,7 +120,7 @@ public class Spaceship extends Application {
 	Button bResetGioco= new Button("Reset");
 	Button bSettings= new Button("Settings");
 	Button bHome= new Button("HOME");
-	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("videoSfondoHome.gif"));
+	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("animazione-esplosione1.gif"));
 	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome);
 	/*
 	 * sostituito dallo sfondo

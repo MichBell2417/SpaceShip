@@ -1,6 +1,7 @@
 package it.edu.iisgubbio.partiGioco;
 
 
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -10,6 +11,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -24,8 +28,6 @@ public class collisioneOggettoNavicella extends Application{
 	ImageView navicella = new ImageView(immagineNavicella);
 	final int WIDTH_NAVICELLA = 200; //le dimensioni nel codice sono richiamate al contrario
 	final int HEIGTH_NAVICELLA = 225;//la WIDTH serve al posto della HEIGTH e viceversa
-									 //a causa della rotazione di novanta gradi
-	
 	//spostamento navicella
 	boolean spostaSU=false;
 	boolean spostaGIU=false;
@@ -36,6 +38,21 @@ public class collisioneOggettoNavicella extends Application{
 	Timeline muoviNavicella= new Timeline(new KeyFrame(
 		      Duration.millis(25), 
 		      x -> aggiornaPosizioneNavicella()));
+								 //a causa della rotazione di novanta gradi
+	
+	//ELLISSI PER COLLISIONI
+	final int RADIUS_WIDTH_ELLISSE_VERT = 30;
+	final int RADIUS_HEIGTH_ELLISSE_VERT = 101;
+	final int POS_X_ELLISSE_VERTICALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
+	final int POS_Y_ELLISSE_VERTICALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
+	Ellipse ellisseVert = new Ellipse (POS_X_ELLISSE_VERTICALE,POS_Y_ELLISSE_VERTICALE,RADIUS_WIDTH_ELLISSE_VERT,RADIUS_HEIGTH_ELLISSE_VERT);
+	
+	final int RADIUS_WIDTH_ELLISSE_ORIZ = 101;
+	final int RADIUS_HEIGTH_ELLISSE_ORIZ = 25;
+	final int POS_X_ELLISSE_ORIZZONTALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
+	final int POS_Y_ELLISSE_ORIZZONTALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
+	Ellipse ellisseOriz = new Ellipse (POS_X_ELLISSE_ORIZZONTALE,POS_Y_ELLISSE_ORIZZONTALE,RADIUS_WIDTH_ELLISSE_ORIZ,RADIUS_HEIGTH_ELLISSE_ORIZ);
+	
 	
 	//OGGETTI
 		final int DIMENSION_OGGETTI = 100; //gli oggetti sono quadrati
@@ -80,8 +97,16 @@ public class collisioneOggettoNavicella extends Application{
 				rotazione=(int)(Math.random()*270);
 				vettoreOggetti[n].setRotate(rotazione);
 			}
+		
 			interfaccia.getChildren().add(vettoreOggetti[n]);
 		}
+		
+		//settaggio ellissi collisioni
+		
+		interfaccia.getChildren().add(ellisseVert);
+		interfaccia.getChildren().add(ellisseOriz);
+		
+		
 		System.out.println("posizionamento oggetti start okay");
 		muoviOggetti.setCycleCount(Animation.INDEFINITE);
 		muoviOggetti.play();
@@ -132,17 +157,27 @@ public class collisioneOggettoNavicella extends Application{
 		if(spostaSU && navicella.getLayoutY()>=-20) {
 			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
+			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			
 		}
 		if(spostaGIU && navicella.getLayoutY()<=HEIGTH_SCHERMO-WIDTH_NAVICELLA) {
 			posizioneNaviciella[1]+=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
+			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			
 		}if(spostaAVANTI && navicella.getLayoutX()<=WIDTH_SCHERMO-HEIGTH_NAVICELLA) {
 			posizioneNaviciella[0]+=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
+			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
+			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
 		}
 		if(spostaINDIETRO && navicella.getLayoutX()>=0) {
 			posizioneNaviciella[0]-=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
+			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
+			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
 		}
 	}
 	public void spostaOggetti() {
