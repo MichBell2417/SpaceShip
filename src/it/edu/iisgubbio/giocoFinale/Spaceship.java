@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -167,6 +168,7 @@ public class Spaceship extends Application {
 	Label eNumeroPunti= new Label(""+punteggioAttuale);
 	Label eMunizioni= new Label("MUNIZIONI");
 	Label eNumeroMunizioni= new Label(""+numeroMunizioniAttuali);
+	long tempoPassato=0;
 	//Button bHome= new Button("HOME"); fatto prima
 	Line separaInformazioni1= new Line(POSIZIONE_X_SEPARATORE1,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE1, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	Line separaInformazioni2= new Line(POSIZIONE_X_SEPARATORE2,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE2, 100+POSIZIONAMENTO_ASSE_Y_MENU);
@@ -182,8 +184,16 @@ public class Spaceship extends Application {
 	boolean resetGame=true;
 	boolean firstOpen=true;
 	
+	//MUSICA DI SOTTOFONDO
+	AudioClip musicaSottofondo= new AudioClip(getClass().getResource("musicaEpicaSottofondo.mp3").toExternalForm());
+	AudioClip suonoEsplosione= new AudioClip(getClass().getResource("Esplosione.mp3").toExternalForm());
+	AudioClip suonoMunizioniFinite= new AudioClip(getClass().getResource("MunizioniFinite.mp3").toExternalForm());
+	AudioClip suonoSparoMissile= new AudioClip(getClass().getResource("SparoMissile.mp3").toExternalForm());
 	
 	public void start(Stage finestra) {
+		//musica
+		musicaSottofondo.play();
+		
 		//definiamo degli effetti
 		DropShadow dropShadow = new DropShadow();
 		dropShadow.setBlurType(BlurType.THREE_PASS_BOX);
@@ -453,9 +463,8 @@ public class Spaceship extends Application {
 		posizioneSfondoX -= valoreSpostamentoSfondo;
 		sfondo.setLayoutX(posizioneSfondoX);
 		sfocatura.setLayoutX(posizioneFinaleSfondo - WIDTH_SFOCATURA / 2);
-		
 		//approfittamo dello spostamento dello sfondo per far anche cambiare colore al numero di munizioni quando è zero
-		if(System.currentTimeMillis() - tempoScorsoMissile >= 500 && numeroMunizioniAttuali==0) {
+		if(System.currentTimeMillis() - tempoPassato >= 500 && numeroMunizioniAttuali==0) {
 			if(bianco) {
 				eNumeroMunizioni.setTextFill(Color.WHITE);
 				bianco=false;
@@ -463,7 +472,7 @@ public class Spaceship extends Application {
 				eNumeroMunizioni.setTextFill(Color.RED);
 				bianco=true;
 			}
-			tempoScorsoMissile = System.currentTimeMillis();
+			tempoPassato = System.currentTimeMillis();
 		}
 	}
 
@@ -497,6 +506,7 @@ public class Spaceship extends Application {
 			}else if(numeroMunizioniAttuali<=5) {
 				eNumeroMunizioni.setTextFill(Color.RED);
 			}
+			suonoSparoMissile.play();
 			munizioni[munizioniUtilizzate].setLayoutY(navicella.getLayoutY() + (HEIGTH_NAVICELLA / 2 - HEIGTH_MISSILE / 2));
 			munizioni[munizioniUtilizzate].setLayoutX(navicella.getLayoutX() + WIDTH_NAVICELLA - WIDTH_MISSILE);
 			munizioniUtilizzate++;
@@ -504,7 +514,9 @@ public class Spaceship extends Application {
 			precedente = munizioniUtilizzate - 1;
 			tempoScorsoMissile = System.currentTimeMillis();
 			eNumeroMunizioni.setText(""+numeroMunizioniAttuali);
-			
+		}else if(System.currentTimeMillis() - tempoScorsoMissile >= 600 && numeroMunizioniAttuali==0) {
+			suonoMunizioniFinite.play();
+			tempoScorsoMissile = System.currentTimeMillis();
 		}
 		//System.out.println("sparato");
 	}
@@ -608,6 +620,7 @@ public class Spaceship extends Application {
 						schermo.getChildren().add(esplosione);
 						esplosione.setLayoutX(((posizioneXMissile + posizioneXMeteorie) / 2) - WIDTH_ESPLOSIONE / 2);
 						esplosione.setLayoutY(posizioneYMissile - HEIGTH_ESPLOSIONE / 2);
+						suonoEsplosione.play();
 						rimuoviOggetto(500, esplosione);
 					}
 					rimuoviOggetto(10, missileSottopostoBound); // spostiamo il missile ad una posizione fuori dalla
