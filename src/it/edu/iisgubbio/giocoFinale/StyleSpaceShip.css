@@ -27,6 +27,8 @@
 	-DIMENSIONI_X_GRIDPANE: 500;
 	-DIMENSIONI_COLONNA_GRIDPANE: -DIMENSIONI_X_GRIDPANE;
 	-DIMENSIONI_Y_GRIDPANE: 400;
+	-DIMENSIONI_X_SFONDO_GRIDPANE: 600;
+	-DIMENSIONI_Y_SFONDO_GRIDPANE: 520;
 	
 	/* dimensioni pulsante impostazioni*/
 	-WIDTH_PULSANTE_IMPOSTAZIONI: -DIMENSIONI_X_GRIDPANE;
@@ -168,8 +170,8 @@
 	-fx-background-radius: 23;
 }
 .sfondoImpostazioni{
-	-fx-pref-width: 600;
-	-fx-pref-height: 500;
+	-fx-pref-width: -DIMENSIONI_X_SFONDO_GRIDPANE;
+	-fx-pref-height: -DIMENSIONI_Y_SFONDO_GRIDPANE;
 	-fx-background-color: rgb(128, 128, 192);
 	-fx-background-radius: 23;
 }
