@@ -1,6 +1,6 @@
 # spaceship
 ## Gioco:
-il gioco si trova nel pacchetto it.edu.iisgubbio.giocoFinale
+il gioco si trova nel pacchetto [it.edu.iisgubbio.giocoFinale](src/it/edu/iisgubbio/giocoFinale)
 utilizza un file css per le dimensioni dei pulsanti, degli sfondi, dei menu ed altro ancora; il programma in java è il gioco che contiene tutto per funzionare in autonomia con il file css che gli regola lo stile.
 ## In cosa consiste:
 repository con il gioco che consiste in una navicella spaziale che si ritrova nello spazio e deve evitare missili detriti ed altri oggetti spaziali. 
