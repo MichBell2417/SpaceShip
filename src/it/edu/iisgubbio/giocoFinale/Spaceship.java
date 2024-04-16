@@ -30,9 +30,18 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/*
+ * COMANDI GIOCO:
+ * W: muovi verso l'alto
+ * S: muovi verso il basso
+ * D: muovi avanti
+ * A: muovi indietro
+ * P: spara
+ * */
+
+
 public class Spaceship extends Application {
-	/* TODO: aggiungere vettore per gli sfondi di ciascun livello del gioco
-	 * TODO: fare collisione navicella oggetti
+	/* TODO: fare collisione navicella oggetti
 	 * TODO: far finire il gioco nella modalità limitata
 	 */
 	
