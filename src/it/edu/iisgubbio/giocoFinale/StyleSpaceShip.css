@@ -23,6 +23,16 @@
 	/* dimensioni cuore vita menu informazioni */
 	-DIMENSIONI_IMMAGINE_CUORE_INFORMAZIONI:20;
 	
+	/* dimenioni gridPane Opzioni */
+	-DIMENSIONI_X_GRIDPANE: 500;
+	-DIMENSIONI_COLONNA_GRIDPANE: -DIMENSIONI_X_GRIDPANE;
+	-DIMENSIONI_Y_GRIDPANE: 400;
+	-DIMENSIONI_X_SFONDO_GRIDPANE: 600;
+	-DIMENSIONI_Y_SFONDO_GRIDPANE: 520;
+	
+	/* dimensioni pulsante impostazioni*/
+	-WIDTH_PULSANTE_IMPOSTAZIONI: -DIMENSIONI_X_GRIDPANE;
+	-HEIGTH_PULSANTE_IMPOSTAZIONI: 40;
 }
 
 /*font utilizzati nel gioco*/
@@ -32,7 +42,7 @@
 }
 
 .pain{
-	-fx-background-color: black;
+	-fx-background-color: rgb(128, 128, 255);
 }
 .buttonHome{
 	-fx-pref-width: -WIDTH_PULSANTI_HOME;
@@ -75,7 +85,7 @@
 .menuInformazioniGioco {
 	-fx-pref-width: -WIDTH_MENU_INFORMAZIONI;
 	-fx-pref-height: -HEIGTH_MENU_INFORMAZIONI;
-	-fx-background-color: rgba(128, 128, 255, 0.4);
+	-fx-background-color: rgba(128, 128, 255, 0.2);
 	-fx-background-radius: 10;
 	
 }
@@ -107,5 +117,61 @@
 	-fx-font-size: 17;
 	-fx-padding: 3;
 	-fx-border-radius: 23;
+	-fx-background-radius: 23;
+}
+.grigliaImpostazioni{
+	-fx-font-size: 20;
+	-fx-font-family: SPACE;
+}
+.testoImpostazioni{
+	-fx-font-family: SPACE;
+	-fx-font-weight: bold;
+	-fx-font-size: 15;
+	-fx-text-fill: rgb(255, 255, 255);
+}
+.testoImpostazioniDettaglio{
+	-fx-max-width: -DIMENSIONI_COLONNA_GRIDPANE;
+	-fx-font-family: SPACE;
+	-fx-font-size: 15;
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-alignment: center;
+}
+.titleImpostazioni{
+	-fx-pref-width: 333;
+	-fx-pref-height: -HEIGTH_TITOLO_HOME;
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-font-size: 25px;
+	-fx-font-family: SPACE;
+	-fx-font-weight: bold;
+	-fx-alignment: center;
+}
+.allinemantoCentratoImpostazioni{
+	-fx-max-width: -DIMENSIONI_COLONNA_GRIDPANE;
+	-fx-alignment: center;
+}
+.pulsanteImpostazioni{
+	-fx-max-width:	-WIDTH_PULSANTE_IMPOSTAZIONI;
+	-fx-pref-height:-HEIGTH_PULSANTE_IMPOSTAZIONI;
+	-fx-background-color: rgb(0, 0, 64);
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-family: SPACE;
+	-fx-font-size: 15;
+	-fx-padding: 3;
+	-fx-border-radius: 23;
+	-fx-background-radius: 23;
+}
+.pulsanteImpostazioni:hover{
+	-fx-background-color: rgb(0, 0, 160);
+	-fx-font-family: SPACE;
+	-fx-font-size: 17;
+	-fx-padding: 3;
+	-fx-border-radius: 23;
+	-fx-background-radius: 23;
+}
+.sfondoImpostazioni{
+	-fx-pref-width: -DIMENSIONI_X_SFONDO_GRIDPANE;
+	-fx-pref-height: -DIMENSIONI_Y_SFONDO_GRIDPANE;
+	-fx-background-color: rgb(128, 128, 192);
 	-fx-background-radius: 23;
 }
