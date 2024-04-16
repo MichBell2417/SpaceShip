@@ -550,7 +550,6 @@ public class Spaceship extends Application {
 			numeriMunizioniEsaurite = new boolean[numeroMunizioni];
 			riempiMunizioni();
 		}
-		
 		bStartGioco.setDisable(true);
 		bResetGioco.setDisable(false);
 		System.out.println("impostazioni aggiornate");
