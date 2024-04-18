@@ -644,6 +644,8 @@ public class Spaceship extends Application {
 		suonoEsplosione.setVolume(volumeSuoni);
 		suonoMunizioniFinite.setVolume(volumeSuoni);
 		suonoSparoMissile.setVolume(volumeSuoni);
+		suonoGameOver.setVolume(volumeSuoni);
+		suonoVittoria.setVolume(volumeSuoni);
 		//sottofondo play o stop
 		if(ckSottofondo.isSelected() && !suonoSottofondoAttivo || volumeCambiato && ckSottofondo.isSelected()) {
 			musicaSottofondo.play();
