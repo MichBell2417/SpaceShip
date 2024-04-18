@@ -25,8 +25,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -184,7 +186,7 @@ public class Spaceship extends Application {
 	
 	//vite
 	int numeroVite=3;
-	int NumeroViteRimaste=numeroVite;
+	int numeroViteRimaste=numeroVite;
 	
 	Region informazioni= new Region();
 	Label ePunti= new Label("PUNTI");
@@ -270,12 +272,37 @@ public class Spaceship extends Application {
 	boolean resetGame=true;
 	boolean firstOpen=true;
 	boolean fineGioco=false;
+	boolean avvenutaCollisione=false;
 	
 	//MUSICA DI SOTTOFONDO
 	AudioClip musicaSottofondo= new AudioClip(getClass().getResource("musicaEpicaSottofondo.mp3").toExternalForm());
 	AudioClip suonoEsplosione= new AudioClip(getClass().getResource("Esplosione.mp3").toExternalForm());
 	AudioClip suonoMunizioniFinite= new AudioClip(getClass().getResource("MunizioniFinite.mp3").toExternalForm());
 	AudioClip suonoSparoMissile= new AudioClip(getClass().getResource("SparoMissile.mp3").toExternalForm());
+	
+	//ELLISSI E CERCHI PER COLLISIONI
+		final int RADIUS_WIDTH_ELLISSE_VERT = 20;
+		final int RADIUS_HEIGTH_ELLISSE_VERT = WIDTH_NAVICELLA/2;
+		final int POS_X_ELLISSE_VERTICALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
+		final int POS_Y_ELLISSE_VERTICALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
+		Ellipse ellisseVert = new Ellipse (POS_X_ELLISSE_VERTICALE,POS_Y_ELLISSE_VERTICALE,RADIUS_WIDTH_ELLISSE_VERT,RADIUS_HEIGTH_ELLISSE_VERT);
+		
+		final int RADIUS_WIDTH_ELLISSE_ORIZ = HEIGTH_NAVICELLA/2;
+		final int RADIUS_HEIGTH_ELLISSE_ORIZ = 20;
+		final int POS_X_ELLISSE_ORIZZONTALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
+		final int POS_Y_ELLISSE_ORIZZONTALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
+		Ellipse ellisseOriz = new Ellipse (POS_X_ELLISSE_ORIZZONTALE,POS_Y_ELLISSE_ORIZZONTALE,RADIUS_WIDTH_ELLISSE_ORIZ,RADIUS_HEIGTH_ELLISSE_ORIZ);
+		
+		final int WIDTH_ELLISSE_UFO = 95;
+		final int HEIGTH_ELLISSE_UFO = 30;
+		
+		final int WIDTH_ELLISSE_ASTEROIDI = 95;
+		
+		Timeline collisioniOggettiNavicella= new Timeline(new KeyFrame(
+			      Duration.millis(5), 
+			      x -> metodoCollisioniOggettiNavicella()));
+		
+		Ellipse vettoreEllissiCollisione[]=new Ellipse[nOggetti]; //vettore contenente i cerchi e le ellissi degli oggetti
 	
 	public void start(Stage finestra) {
 		//definiamo degli effetti
@@ -306,19 +333,22 @@ public class Spaceship extends Application {
 		sfocatura.setLayoutY((HEIGTH_SCHERMO - HEIGTH_SFOCATURA) / 2);
 		// settaggi oggetti
 		int immagine, rotazione;
-		for (int n = 0; n < nOggetti; n++) {
-			immagine = (int) (Math.random() * vettoreImmagini.length);
-			vettoreOggetti[n] = new ImageView(vettoreImmagini[immagine]);
+		for(int n=0; n<nOggetti; n++) {
+			immagine=(int)(Math.random()*vettoreImmagini.length);
+			vettoreOggetti[n]=new ImageView(vettoreImmagini[immagine]);
 			vettoreOggetti[n].setFitHeight(DIMENSION_OGGETTI);
 			vettoreOggetti[n].setFitWidth(DIMENSION_OGGETTI);
-			riposizionaOggetto(vettoreOggetti[n]);
-			if (immagine != 2) {
-				rotazione = (int) (Math.random() * 270);
+			if(immagine!=2) {
+				Ellipse EllisseAsteroidiColl = new Ellipse(WIDTH_ELLISSE_ASTEROIDI/2,WIDTH_ELLISSE_ASTEROIDI/2);
+				vettoreEllissiCollisione[n]=EllisseAsteroidiColl;
+				rotazione=(int)(Math.random()*270);
 				vettoreOggetti[n].setRotate(rotazione);
-				oggettoNellaPosizione[n]=immagine; //memorizziamo che immagine è
-			}else { //è un ufo
-				oggettoNellaPosizione[n]=immagine;
+			}else {
+				Ellipse EllisseUfoColl = new Ellipse(WIDTH_ELLISSE_UFO/2, HEIGTH_ELLISSE_UFO/2);
+				vettoreEllissiCollisione[n]=EllisseUfoColl;
 			}
+			vettoreEllissiCollisione[n].setVisible(false);
+			riposizionaOggetto(n);
 		}
 		// settaggio navicella
 		navicella.setFitWidth(WIDTH_NAVICELLA);
@@ -565,7 +595,7 @@ public class Spaceship extends Application {
 		scena.setOnKeyPressed(e -> pigiato(e));
 		scena.setOnKeyReleased(e -> rilasciato(e));
 		
-		finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
+		//finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();
@@ -688,6 +718,7 @@ public class Spaceship extends Application {
 			controllaCollisione.stop();
 			muoviSfondo.stop();
 			muoviOggetti.stop();
+			collisioniOggettiNavicella.stop();
 			
 			if(firstOpen) {
 				bStartGioco.setDisable(false);
@@ -719,7 +750,15 @@ public class Spaceship extends Application {
 			posizioneNaviciella[1]=(HEIGTH_SCHERMO - WIDTH_NAVICELLA) / 2;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 			navicella.setLayoutY(posizioneNaviciella[1]);
+			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2);
+			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2);
+			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			ellisseOriz.setVisible(false);	
+			ellisseVert.setVisible(false);
 			schermo.getChildren().add(navicella);
+			schermo.getChildren().add(ellisseOriz);
+			schermo.getChildren().add(ellisseVert);
 			if(resetGame) {
 				//nel caso si sia in modalità di reset
 				fineGioco=false;
@@ -727,15 +766,17 @@ public class Spaceship extends Application {
 				posizioneSfondo2X = WIDTH_SFONDO;
 				munizioniUtilizzate=0;
 				punteggioAttuale=0;
+				numeroViteRimaste=numeroVite;
 				eNumeroPunti.setText(""+punteggioAttuale);
 				// riempimento munizioni
 				riempiMunizioni();
 				numeroMunizioniAttuali=numeroMunizioni;
 				eNumeroMunizioni.setText(""+numeroMunizioniAttuali);
 				for (int n = 0; n < nOggetti; n++) {
-					riposizionaOggetto(vettoreOggetti[n]);
+					riposizionaOggetto(n);
 					refreshVitaOggetto(n); //affidiamo ad ogni oggetto la sua vita
 					schermo.getChildren().add(vettoreOggetti[n]);
+					schermo.getChildren().add(vettoreEllissiCollisione[n]);
 				}
 				sfocatura.setLayoutX(WIDTH_SFONDO);
 				resetGame=false;
@@ -743,6 +784,7 @@ public class Spaceship extends Application {
 				//nel caso si sia in modalità normale
 				for (int n = 0; n < nOggetti; n++) {
 					schermo.getChildren().add(vettoreOggetti[n]);
+					schermo.getChildren().add(vettoreEllissiCollisione[n]);
 				}
 				for (int nM = munizioniUtilizzate; nM < numeroMunizioni; nM++) {
 					schermo.getChildren().add(munizioni[nM]);
@@ -777,28 +819,14 @@ public class Spaceship extends Application {
 //			contaRipetizioniSpostamento=0;
 			muoviSfondo.setCycleCount(Animation.INDEFINITE);
 			muoviSfondo.play();
-			System.out.println(posizioneSfondoX);
-			System.out.println(posizioneSfondo2X);
 			// movimento oggetti
 			muoviOggetti.setCycleCount(Animation.INDEFINITE);
 			muoviOggetti.play();
+			//controlla collisioni
+			collisioniOggettiNavicella.setCycleCount(Animation.INDEFINITE);
+			collisioniOggettiNavicella.play();
 			break;
-		case 3:
-			int punteggioBonus=numeroMunizioniAttuali*5;//le munizioni rimaste moltiplicate per 5
-			int punteggioVite=NumeroViteRimaste*100; //le vite rimanenti moltiplicate per 100
-			int punteggioTotale=punteggioAttuale+punteggioBonus+punteggioVite;
 			
-			ePunteggioDaBonus.setText(""+punteggioBonus);
-			ePunteggioDaVita.setText(""+punteggioVite);
-			ePunteggioDaPunteggio.setText(""+punteggioAttuale);
-			ePunteggioTOT.setText(""+punteggioTotale);
-			
-			schermo.getChildren().add(sfondo);
-			schermo.getChildren().add(sfondoHomeTrasperente);
-			schermo.getChildren().add(sfondoFinale);
-			schermo.getChildren().add(eTitoloFinale);
-			schermo.getChildren().add(grigliaGiocoFinale);
-			break;
 		case 2:
 			//costruiamo la schermata delle impostazioni
 			grigliaImpostazioni.setGridLinesVisible(false);
@@ -806,6 +834,39 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(sfondoHomeTrasperente);
 			schermo.getChildren().add(impostazioni);
 			schermo.getChildren().add(grigliaImpostazioni);
+			break;
+			
+		case 3:
+			muoviSfondo.stop();
+			muoviNavicella.stop();
+			controllaCollisione.stop();
+			muoviOggetti.stop();
+			controllaCollisione.stop();
+			giocoIniziato=false;
+			fineGioco=true;
+			
+			int punteggioBonus=numeroMunizioniAttuali*5;//le munizioni rimaste moltiplicate per 5
+			int punteggioVite=numeroViteRimaste+100; //le vite rimanenti moltiplicate per 100
+			int punteggioTotale=punteggioAttuale+punteggioBonus+punteggioVite;
+			
+			ePunteggioDaBonus.setText(""+punteggioBonus);
+			ePunteggioDaVita.setText(""+punteggioVite);
+			ePunteggioDaPunteggio.setText(""+punteggioAttuale);
+			ePunteggioTOT.setText(""+punteggioTotale);
+			
+			if(avvenutaCollisione) {
+				eTitoloFinale.setText("GAME OVER");
+			}else {
+				eTitoloFinale.setText("YOU WIN");
+			}
+			
+			sfondo.setLayoutX(-WIDTH_SFONDO+WIDTH_SCHERMO);
+			
+			schermo.getChildren().add(sfondo);
+			schermo.getChildren().add(sfondoHomeTrasperente);
+			schermo.getChildren().add(sfondoFinale);
+			schermo.getChildren().add(eTitoloFinale);
+			schermo.getChildren().add(grigliaGiocoFinale);
 			break;
 		}
 	}
@@ -817,6 +878,7 @@ public class Spaceship extends Application {
 			spostaAllaFineNavicella.stop();
 			//riportiamo la variabile al suo valore predefinito
 			valoreSpostamentoNavicella=10;
+			avvenutaCollisione=false;
 			costruisciInterfaccia(3);
 		}
 	}
@@ -830,11 +892,6 @@ public class Spaceship extends Application {
 			if (posizioneFinaleSfondo <= WIDTH_SCHERMO) {
 //				tempo2=System.currentTimeMillis();
 //				System.out.println(tempo1-tempo2+ " ripetizioni: " +contaRipetizioniSpostamento);
-				muoviSfondo.stop();
-				muoviNavicella.stop();
-				controllaCollisione.stop();
-				muoviOggetti.stop();
-				giocoIniziato=false;
 				for(int i=0; i<vettoreOggetti.length; i++) {
 					schermo.getChildren().remove(vettoreOggetti[i]);
 				}
@@ -878,26 +935,30 @@ public class Spaceship extends Application {
 	}
 
 	public void spostaOggetti() {
-		// scegliamo l'oggetto
+		//scegliamo l'oggetto
 		indiceOggetto++;
-		if (indiceOggetto == nOggetti) {
-			indiceOggetto = 0;
+		if(indiceOggetto==nOggetti) {
+			indiceOggetto=0;
 		}
-		oggettoAttuale = vettoreOggetti[indiceOggetto];
-		oggettoAttuale.setLayoutX(oggettoAttuale.getLayoutX() - 3);
-		// spostiamo o risposizioniamo l'oggetto
-		if (oggettoAttuale.getLayoutX() <= -DIMENSION_OGGETTI) {
-			riposizionaOggetto(oggettoAttuale);
+		oggettoAttuale=vettoreOggetti[indiceOggetto];
+		//spostiamo o risposizioniamo l'oggetto
+		if(oggettoAttuale.getLayoutX()<=-DIMENSION_OGGETTI) {
+			riposizionaOggetto(indiceOggetto);
+		}else {
+			oggettoAttuale.setLayoutX(oggettoAttuale.getLayoutX()-3);
+			vettoreEllissiCollisione[indiceOggetto].setCenterX((oggettoAttuale.getLayoutX()+DIMENSION_OGGETTI/2)-3);
 		}
 	}
 
-	public void riposizionaOggetto(ImageView oggetto) {
+	public void riposizionaOggetto(int posizione) {
 		int posizioneY;
 		int posizioneX;
-		posizioneY = (int) (Math.random() * (HEIGTH_SCHERMO - DIMENSION_OGGETTI));
-		posizioneX = (int) (Math.random() * WIDTH_SCHERMO);
-		oggetto.setLayoutX(WIDTH_SCHERMO + posizioneX);
-		oggetto.setLayoutY(posizioneY);
+		posizioneY=(int)(Math.random()*(HEIGTH_SCHERMO-DIMENSION_OGGETTI));
+		posizioneX=(int)(Math.random()*WIDTH_SCHERMO);
+		vettoreOggetti[posizione].setLayoutX(WIDTH_SCHERMO+posizioneX);
+		vettoreOggetti[posizione].setLayoutY(posizioneY);
+		vettoreEllissiCollisione[posizione].setCenterX(WIDTH_SCHERMO+posizioneX);
+		vettoreEllissiCollisione[posizione].setCenterY(posizioneY+DIMENSION_OGGETTI/2);
 	}
 
 	public void spara() {
@@ -973,21 +1034,30 @@ public class Spaceship extends Application {
 		for (int nM = 0; nM < munizioniUtilizzate; nM++) {
 			munizioni[nM].setLayoutX(munizioni[nM].getLayoutX() + valoreSpostamentoNavicella + 3);
 		}
-		if (spostaSU && navicella.getLayoutY() >= -20) {
-			posizioneNaviciella[1] -= valoreSpostamentoNavicella;
+		if(spostaSU && navicella.getLayoutY()>=-20) {
+			posizioneNaviciella[1]-=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
+			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			
 		}
-		if (spostaGIU && navicella.getLayoutY() <= HEIGTH_SCHERMO - WIDTH_NAVICELLA) {
-			posizioneNaviciella[1] += valoreSpostamentoNavicella;
+		if(spostaGIU && navicella.getLayoutY()<=HEIGTH_SCHERMO-WIDTH_NAVICELLA) {
+			posizioneNaviciella[1]+=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
-		}
-		if (spostaINDIETRO && navicella.getLayoutX() >= 0) {
-			posizioneNaviciella[0] -= valoreSpostamentoNavicella;
+			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
+			
+		}if(spostaAVANTI && navicella.getLayoutX()<=WIDTH_SCHERMO-HEIGTH_NAVICELLA) {
+			posizioneNaviciella[0]+=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
+			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
+			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
 		}
-		if (spostaAVANTI && navicella.getLayoutX() <= WIDTH_SCHERMO - HEIGTH_NAVICELLA) {
-			posizioneNaviciella[0] += valoreSpostamentoNavicella;
+		if(spostaINDIETRO && navicella.getLayoutX()>=0) {
+			posizioneNaviciella[0]-=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
+			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
+			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
 		}
 	}
 
@@ -1019,7 +1089,7 @@ public class Spaceship extends Application {
 					// spostiamo il missile e gli oggetti
 					vettoreViteOggettiRimaste[numeroOggettoBound]--; //scaliamo la vita all'oggetto colpito
 					if(vettoreViteOggettiRimaste[numeroOggettoBound]==0) {
-						riposizionaOggetto(oggettoSottopostoBound);
+						riposizionaOggetto(numeroOggettoBound);
 						//aggiorniamo la vita all'oggetto e la aggiungioamo come punteggio
 						punteggioAttuale+=refreshVitaOggetto(numeroOggettoBound)*10;;
 						eNumeroPunti.setText(""+punteggioAttuale);
@@ -1064,7 +1134,41 @@ public class Spaceship extends Application {
 	public void eseguiRimozione(ImageView oggetto) {
 		schermo.getChildren().remove(oggetto);
 	}
-
+	int posizioneCollisioneOggetto=0;
+	public void metodoCollisioniOggettiNavicella() {
+		posizioneCollisioneOggetto++;
+		if(posizioneCollisioneOggetto==nOggetti) {
+			posizioneCollisioneOggetto=0;
+		}
+		boolean intersezione=false;
+		Shape intersectPunta = Shape.intersect(ellisseOriz, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
+        if (intersectPunta.getBoundsInLocal().getWidth() >= 30){
+            intersezione=true;
+        }
+        Shape intersectAli = Shape.intersect(ellisseVert, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
+        if (intersectAli.getBoundsInLocal().getWidth() >= 15){
+            intersezione=true;
+        }
+        
+        if(intersezione) {
+			int posizioneXMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutX());
+			int posizioneYMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutY());
+            riposizionaOggetto(posizioneCollisioneOggetto);
+            ImageView esplosione=new ImageView(animazioneEsplosione);
+			esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
+			esplosione.setFitWidth(WIDTH_ESPLOSIONE);    
+			schermo.getChildren().add(esplosione);
+			esplosione.setLayoutX(posizioneXMeteorite-DIMENSION_OGGETTI/2);
+			esplosione.setLayoutY(posizioneYMeteorite-DIMENSION_OGGETTI/2);
+			rimuoviOggetto(500, esplosione);
+			rimuoviOggetto(10, vettoreCuori[numeroViteRimaste-1]);
+			numeroViteRimaste--;
+			if(numeroViteRimaste == 0) {
+				avvenutaCollisione=true;
+				costruisciInterfaccia(3);
+			}
+        }
+	}
 	public static void main(String[] args) {
 		launch(args);
 	}
