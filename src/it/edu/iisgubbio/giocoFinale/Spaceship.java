@@ -256,7 +256,7 @@ public class Spaceship extends Application {
 	Label eTitoloFinale=new Label("YOU WIN!");
 	Label ePuntiFinale= new Label("punti totali:");
 	Label ePunteggioTOT= new Label("----");
-	Label eProporzioneFinale= new Label("proporzioni punteggio:");
+	Label eProporzioneFinale= new Label("---------------------------");
 	Label eVitaFinale= new Label("vita:");
 	Label ePunteggioDaVita=new Label("-");
 	Label eBonusFinale= new Label("bonus:");
@@ -785,7 +785,7 @@ public class Spaceship extends Application {
 			break;
 		case 3:
 			int punteggioBonus=numeroMunizioniAttuali*5;//le munizioni rimaste moltiplicate per 5
-			int punteggioVite=NumeroViteRimaste+100; //le vite rimanenti moltiplicate per 100
+			int punteggioVite=NumeroViteRimaste*100; //le vite rimanenti moltiplicate per 100
 			int punteggioTotale=punteggioAttuale+punteggioBonus+punteggioVite;
 			
 			ePunteggioDaBonus.setText(""+punteggioBonus);
