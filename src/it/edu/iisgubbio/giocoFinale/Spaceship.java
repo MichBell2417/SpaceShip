@@ -258,7 +258,7 @@ public class Spaceship extends Application {
 	Label eTitoloFinale=new Label("YOU WIN!");
 	Label ePuntiFinale= new Label("punti totali:");
 	Label ePunteggioTOT= new Label("----");
-	Label eProporzioneFinale= new Label("proporzioni punteggio:");
+	Label eProporzioneFinale= new Label("---------------------------");
 	Label eVitaFinale= new Label("vita:");
 	Label ePunteggioDaVita=new Label("-");
 	Label eBonusFinale= new Label("bonus:");
