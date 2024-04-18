@@ -196,6 +196,7 @@
 	-fx-text-fill: rgb(255, 255, 255);
 }
 .testoGiocoFinaleSottotitolo{
+	-fx-max-width: 500;
 	-fx-font-family: SPACE;
 	-fx-font-weight: bold;
 	-fx-font-size: 23;
@@ -205,7 +206,6 @@
 .titleFinale{
 	-fx-pref-width: -WIDTH_TITOLO_HOME;
 	-fx-pref-height: -HEIGTH_TITOLO_HOME;
-	-fx-text-fill: rgb(255, 255, 255);
 	-fx-font-size: 40;
 	-fx-font-family: SPACE;
 	-fx-font-weight: bold;
