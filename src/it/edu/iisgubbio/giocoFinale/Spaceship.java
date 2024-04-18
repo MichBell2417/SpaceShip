@@ -273,36 +273,41 @@ public class Spaceship extends Application {
 	boolean firstOpen=true;
 	boolean fineGioco=false;
 	boolean avvenutaCollisione=false;
+	Timeline schermataPunteggio= new Timeline(new KeyFrame(
+			Duration.millis(1000), 
+			x -> costruisciInterfaccia(3)));
 	
 	//MUSICA DI SOTTOFONDO
 	AudioClip musicaSottofondo= new AudioClip(getClass().getResource("musicaEpicaSottofondo.mp3").toExternalForm());
 	AudioClip suonoEsplosione= new AudioClip(getClass().getResource("Esplosione.mp3").toExternalForm());
 	AudioClip suonoMunizioniFinite= new AudioClip(getClass().getResource("MunizioniFinite.mp3").toExternalForm());
 	AudioClip suonoSparoMissile= new AudioClip(getClass().getResource("SparoMissile.mp3").toExternalForm());
-	
+
 	//ELLISSI E CERCHI PER COLLISIONI
-		final int RADIUS_WIDTH_ELLISSE_VERT = 20;
-		final int RADIUS_HEIGTH_ELLISSE_VERT = WIDTH_NAVICELLA/2;
-		final int POS_X_ELLISSE_VERTICALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
-		final int POS_Y_ELLISSE_VERTICALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
-		Ellipse ellisseVert = new Ellipse (POS_X_ELLISSE_VERTICALE,POS_Y_ELLISSE_VERTICALE,RADIUS_WIDTH_ELLISSE_VERT,RADIUS_HEIGTH_ELLISSE_VERT);
-		
-		final int RADIUS_WIDTH_ELLISSE_ORIZ = HEIGTH_NAVICELLA/2;
-		final int RADIUS_HEIGTH_ELLISSE_ORIZ = 20;
-		final int POS_X_ELLISSE_ORIZZONTALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
-		final int POS_Y_ELLISSE_ORIZZONTALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
-		Ellipse ellisseOriz = new Ellipse (POS_X_ELLISSE_ORIZZONTALE,POS_Y_ELLISSE_ORIZZONTALE,RADIUS_WIDTH_ELLISSE_ORIZ,RADIUS_HEIGTH_ELLISSE_ORIZ);
-		
-		final int WIDTH_ELLISSE_UFO = 95;
-		final int HEIGTH_ELLISSE_UFO = 30;
-		
-		final int WIDTH_ELLISSE_ASTEROIDI = 95;
-		
-		Timeline collisioniOggettiNavicella= new Timeline(new KeyFrame(
-			      Duration.millis(5), 
-			      x -> metodoCollisioniOggettiNavicella()));
-		
-		Ellipse vettoreEllissiCollisione[]=new Ellipse[nOggetti]; //vettore contenente i cerchi e le ellissi degli oggetti
+	final int RADIUS_WIDTH_ELLISSE_VERT = 20;
+	final int RADIUS_HEIGTH_ELLISSE_VERT = WIDTH_NAVICELLA/2;
+	final int POS_X_ELLISSE_VERTICALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
+	final int POS_Y_ELLISSE_VERTICALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
+	Ellipse ellisseVert = new Ellipse (POS_X_ELLISSE_VERTICALE,POS_Y_ELLISSE_VERTICALE,RADIUS_WIDTH_ELLISSE_VERT,RADIUS_HEIGTH_ELLISSE_VERT);
+
+	final int RADIUS_WIDTH_ELLISSE_ORIZ = HEIGTH_NAVICELLA/2;
+	final int RADIUS_HEIGTH_ELLISSE_ORIZ = 20;
+	final int POS_X_ELLISSE_ORIZZONTALE = posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10;
+	final int POS_Y_ELLISSE_ORIZZONTALE = posizioneNaviciella[1]+HEIGTH_NAVICELLA/2;
+	Ellipse ellisseOriz = new Ellipse (POS_X_ELLISSE_ORIZZONTALE,POS_Y_ELLISSE_ORIZZONTALE,RADIUS_WIDTH_ELLISSE_ORIZ,RADIUS_HEIGTH_ELLISSE_ORIZ);
+
+	final int WIDTH_ELLISSE_UFO = 95;
+	final int HEIGTH_ELLISSE_UFO = 30;
+
+	final int WIDTH_ELLISSE_ASTEROIDI = 95;
+
+	Timeline collisioniOggettiNavicella= new Timeline(new KeyFrame(
+			Duration.millis(5), 
+			x -> metodoCollisioniOggettiNavicella()));
+
+	Ellipse vettoreEllissiCollisione[]=new Ellipse[nOggetti]; //vettore contenente i cerchi e le ellissi degli oggetti
+
+	
 	
 	public void start(Stage finestra) {
 		//definiamo degli effetti
@@ -599,9 +604,8 @@ public class Spaceship extends Application {
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();
-
 	}
-	
+
 	public void controllaImpostazioni() {
 		//cambiamo la VITA DEGLI OGGETTI nel gioco (meteore, ufo)
 		int nuovaVitaMeteorite= Integer.parseInt(cViteMeteorite.getText());
@@ -900,6 +904,11 @@ public class Spaceship extends Application {
 						schermo.getChildren().remove(munizioni[i]);
 					}
 				}
+				muoviSfondo.stop();
+				muoviNavicella.stop();
+				controllaCollisione.stop();
+				muoviOggetti.stop();
+				controllaCollisione.stop();
 				spostaAllaFineNavicella.setCycleCount(Animation.INDEFINITE);
 				spostaAllaFineNavicella.play();
 			}
@@ -1165,7 +1174,13 @@ public class Spaceship extends Application {
 			numeroViteRimaste--;
 			if(numeroViteRimaste == 0) {
 				avvenutaCollisione=true;
-				costruisciInterfaccia(3);
+				rimuoviOggetto(10, navicella);
+				esplosione.setLayoutX(posizioneNaviciella[0]-DIMENSION_OGGETTI/2);
+				esplosione.setLayoutY(posizioneNaviciella[1]-DIMENSION_OGGETTI/2);
+				collisioniOggettiNavicella.stop();
+				controllaCollisione.stop();
+				schermataPunteggio.setCycleCount(1);
+				schermataPunteggio.play();
 			}
         }
 	}
