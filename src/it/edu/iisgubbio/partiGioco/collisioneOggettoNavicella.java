@@ -213,7 +213,6 @@ public class collisioneOggettoNavicella extends Application{
 			riposizionaOggetto(indiceOggetto);
 		}else {
 			oggettoAttuale.setLayoutX(oggettoAttuale.getLayoutX()-3);
-
 			vettoreEllissiCollisione[indiceOggetto].setCenterX((oggettoAttuale.getLayoutX()+DIMENSION_OGGETTI/2)-3);
 		}
 	}
@@ -226,7 +225,6 @@ public class collisioneOggettoNavicella extends Application{
 		vettoreOggetti[posizione].setLayoutY(posizioneY);
 		vettoreEllissiCollisione[posizione].setCenterX(WIDTH_SCHERMO+posizioneX);
 		vettoreEllissiCollisione[posizione].setCenterY(posizioneY+DIMENSION_OGGETTI/2);
-
 	}
 	int posizioneCollisioneOggetto=0;
 	public void metodoCollisioniOggettiNavicella() {
@@ -236,26 +234,27 @@ public class collisioneOggettoNavicella extends Application{
 		}
 		boolean intersezione=false;
 		Shape intersectPunta = Shape.intersect(ellisseOriz, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
-        if (intersectPunta.getBoundsInLocal().getWidth() != -1){
+        if (intersectPunta.getBoundsInLocal().getWidth() >= 30){
             System.out.println("collisione punta");
             intersezione=true;
         }
         Shape intersectAli = Shape.intersect(ellisseVert, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
-        if (intersectAli.getBoundsInLocal().getWidth() != -1){
+        if (intersectAli.getBoundsInLocal().getWidth() >= 30){
             System.out.println("collisione Ali");
             intersezione=true;
         }
         
         if(intersezione) {
-			int posizioneXMeteorie=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutX());
+			int posizioneXMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutX());
+			int posizioneYMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutY());
             riposizionaOggetto(posizioneCollisioneOggetto);
-            /*ImageView esplosione=new ImageView(animazioneEsplosione);
+            ImageView esplosione=new ImageView(animazioneEsplosione);
 			esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
 			esplosione.setFitWidth(WIDTH_ESPLOSIONE);    
 			interfaccia.getChildren().add(esplosione);
-			esplosione.setLayoutX(+WIDTH_ESPLOSIONE/2);
-			esplosione.setLayoutY(posizioneYMissile-HEIGTH_ESPLOSIONE/2);
-			rimuoviOggetto(500, esplosione);*/
+			esplosione.setLayoutX(posizioneXMeteorite-DIMENSION_OGGETTI/2);
+			esplosione.setLayoutY(posizioneYMeteorite-DIMENSION_OGGETTI/2);
+			rimuoviOggetto(500, esplosione);
         }
 	}
 	public void rimuoviOggetto(int traQuantoTempo, ImageView oggetto) {
