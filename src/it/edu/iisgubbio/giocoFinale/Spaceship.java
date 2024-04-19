@@ -32,23 +32,8 @@ import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-/*
- * COMANDI GIOCO:
- * W: muovi verso l'alto
- * S: muovi verso il basso
- * D: muovi avanti
- * A: muovi indietro
- * P: spara
- * */
-
-
 public class Spaceship extends Application {
-	
-//	utili per controllare il tempo
-//	long tempo1;
-//	long tempo2;
-//	int contaRipetizioniSpostamento=0;
-	
+
 	// SCHERMO
 	Pane schermo = new Pane();
 	final int WIDTH_SCHERMO = 1000;
@@ -67,14 +52,14 @@ public class Spaceship extends Application {
 	Image immagineSfocatura = new Image(getClass().getResourceAsStream("Sfocatura.png"));
 	ImageView sfocatura = new ImageView(immagineSfocatura);
 	// spostamento sfondo
-	double tempoDiSpostamentoTOT = 25; // se si vuole scegliere la durata del gioco standard 25s
+	double tempoDiSpostamentoTOT = 25; //durata del gioco standard 25s
 	double posizioneSfondoX = 0;
 	double posizioneSfondo2X = WIDTH_SFONDO;
 	double valoreSpostamentoSfondo = (WIDTH_SFONDO-1000)/(tempoDiSpostamentoTOT*1000)*25;
 	Timeline muoviSfondo = new Timeline(new KeyFrame(Duration.millis(35), x -> aggiornaPosizioneSfondo()));
 
 	// OGGETTI
-	final int DIMENSION_OGGETTI = 100; // gli oggetti sono quadrati
+	final int DIMENSION_OGGETTI = 100;
 	int nOggetti = 7;
 	Image immagineUfo = new Image(getClass().getResourceAsStream("Ufo.png"));
 	Image immagineMeteoriteBlu = new Image(getClass().getResourceAsStream("MeteoriteBlu.png"));
@@ -117,7 +102,7 @@ public class Spaceship extends Application {
 	ImageView[] munizioni = new ImageView[numeroMunizioni];
 	// spawn missile
 	long tempoScorsoMissile;
-	
+
 	//PUNTEGGIO
 	//viene incrementato nel metodo "metodoControllaCollisioni"
 	int punteggioAttuale=0;
@@ -132,18 +117,17 @@ public class Spaceship extends Application {
 
 	// controlla intersezione
 	Timeline controllaCollisione = new Timeline(new KeyFrame(Duration.millis(2), x -> metodoControllaCollisione()));
-	// esplosione
 	final int WIDTH_ESPLOSIONE = 200;
 	final int HEIGTH_ESPLOSIONE = 200;
 	Image animazioneEsplosione = new Image(getClass().getResourceAsStream("animazione-esplosione1.gif"));	
 
 	//INTERFACCIA GRAFICA
-	int statoInterfaccia=0; //0=home, 1=gioco, 2=impostazioni
-	
+	int statoInterfaccia=0; //0=home, 1=gioco, 2=impostazioni, 3=schermata finale
+
 	//home
 	final int WIDTH_SFONDO_HOME=1000;
 	final int HEIGTH_SFONDO_HOME=600;
-	final int OFFSET_Y_OGGETTI_MENU=20; //valore che indica la posizione degli oggetti (titolo, pulsanti) del menu
+	final int OFFSET_Y_OGGETTI_MENU=20;
 	final int WIDTH_PULSANTI_HOME=200;
 	final int HEIGTH_PULSANTI_HOME=40;
 	final int WIDTH_RECTANGLE_HOME=275;
@@ -158,15 +142,10 @@ public class Spaceship extends Application {
 	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("videoSfondoHome.gif"));
 
 	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome);
-	/*
-	 * sostituito dallo sfondo
-	Image immagineSfondoHomeTrasparente=new Image(getClass().getResourceAsStream("immagineSfondoHomeTrasparente.png"));
-	ImageView sfondoHomeTrasperente=new ImageView(immagineSfondoHomeTrasparente);
-	*/
 	Rectangle sfondoHomeTrasperente= new Rectangle(WIDTH_SCHERMO, HEIGTH_SCHERMO);
-	Region menu= new Region(); //come u rettangolo ma controllabile maggiormente da CSS
-	
-	//gioco
+	Region menu= new Region();
+
+	//GIOCO
 	final int WIDTH_MENU_INFORMAZIONI=500;
 	final int HEIGTH_MENU_INFORMAZIONI=100;
 	final int WIDTH_TESTO_INFORMAZIONI=100;
@@ -174,21 +153,16 @@ public class Spaceship extends Application {
 	final int WIDTH_PULSANTE_INFORMAZIONI=100;
 	final int HEIGTH_PULSANTE_INFORMAZIONI=40;
 	final int DIMENSIONI_IMMAGINE_CUORE_INFORMAZIONI=35;
-	
 	final int POSIZIONAMENTO_ASSE_Y_MENU=-20;
 	final int POSIZIONAMENTO_ASSE_X_MENU=(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
 	final int OFFSET_ELEMENTI_MENU=WIDTH_MENU_INFORMAZIONI/4;
 	final int POSIZIONE_X_SEPARATORE1=OFFSET_ELEMENTI_MENU+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
 	final int POSIZIONE_X_SEPARATORE2=OFFSET_ELEMENTI_MENU*2+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
 	final int POSIZIONE_X_SEPARATORE3=OFFSET_ELEMENTI_MENU*3+(WIDTH_SCHERMO-WIDTH_MENU_INFORMAZIONI)/2;
-	
 	boolean bianco=true; //per alternare il colore bianco o rosso delle munizioni
 	boolean giocoIniziato=false;
-	
-	//vite
-	int numeroVite=3;
-	int numeroViteRimaste=numeroVite;
-	
+
+	//oggetti informazioni
 	Region informazioni= new Region();
 	Label ePunti= new Label("PUNTI");
 	Label eVite= new Label("VITE");
@@ -200,13 +174,13 @@ public class Spaceship extends Application {
 	Line separaInformazioni1= new Line(POSIZIONE_X_SEPARATORE1,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE1, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	Line separaInformazioni2= new Line(POSIZIONE_X_SEPARATORE2,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE2, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	Line separaInformazioni3= new Line(POSIZIONE_X_SEPARATORE3,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE3, 100+POSIZIONAMENTO_ASSE_Y_MENU);
-	//immagini per vita
+	int numeroVite=3; //devono essere 3
+	int numeroViteRimaste=numeroVite;
 	Image imamgineCuoreVita=new Image(getClass().getResourceAsStream("immagineCuroePerVite.png"));
-	ImageView vettoreCuori[]= new ImageView[numeroVite]; //3 vite
-	
-	
-	//IMPOSTAZIONI
-	//eseguzione
+	ImageView vettoreCuori[]= new ImageView[numeroVite];
+
+
+	//IMPOSTAZIONI 
 	boolean suonoSottofondoAttivo=false;
 	//interfaccia
 	final int DIMENSIONI_X_GRIDPANE=500;
@@ -214,28 +188,26 @@ public class Spaceship extends Application {
 	final int DIMENSIONI_Y_GRIDPANE=400;
 	final int DIMENSIONI_X_SFONDO_IMPOSTAZIONI= 600;
 	final int DIMENSIONI_Y_SFONDO_IMPOSTAZIONI= 520;
-	
+
 	int numeroLivelli=3;
-	boolean modalitaGiocoIllimitato=false; //modalità: 1=illimitato 0=limitato
+	boolean modalitaGiocoIllimitato=false; //modalità: true=illimitato false=limitato
 	Button bHomeSettings= new Button("HOME");
 	Button bSave= new Button("Save");
 	Region impostazioni= new Region(); 
 
-	//creiamo gli oggetti
 	Rectangle dimensioneGrigliaX= new Rectangle(DIMENSIONI_X_GRIDPANE,0);
 	Rectangle dimensioneGrigliaY= new Rectangle(0,DIMENSIONI_Y_GRIDPANE);
 	Rectangle dimensioneGrigliaColonna1= new Rectangle(DIMENSIONI_COLONNA_GRIDPANE,0);
 	Rectangle dimensioneGrigliaColonna2= new Rectangle(DIMENSIONI_COLONNA_GRIDPANE,0);
 	Rectangle dimensioneGrigliaColonna3= new Rectangle(DIMENSIONI_COLONNA_GRIDPANE,0);
 	Label eImpostazioni=new Label("IMPOSTAZIONI");
-	//Button bHomeSettings= new Button("HOME"); creata globale
 	Label eModalitaGioco=new Label("Modalità di gioco:");
 	ToggleGroup modalitaDiGioco = new ToggleGroup();
 	RadioButton rbSenzaLimiti = new RadioButton("illimitato");
 	RadioButton rbConLimiti = new RadioButton("limitato");
-	Label eNumeroMuinizioniImpostazioni = new Label("numero munizioni: "); //in caso si scelga la modalità senza limiti
+	Label eNumeroMuinizioniImpostazioni = new Label("numero munizioni: ");
 	TextField cNumeroMunizioni= new TextField("100");
-	Label eDurataGioco = new Label("durata (Secondi): "); //in caso si scelga la modalità con limiti
+	Label eDurataGioco = new Label("durata (Secondi): ");
 	TextField durataGioco= new TextField("25");
 	Label eSuono= new Label("Suono: ");
 	Label eVolumeSuono= new Label("volume: ");
@@ -268,7 +240,7 @@ public class Spaceship extends Application {
 	Label ePunteggioDaPunteggio=new Label("-");
 	Region sfondoFinale=new Region();
 	Button bHomeFinale= new Button("HOME");
-	
+
 	//utili per cambiare le interfaccie nel modo corretto
 	boolean resetGame=true;
 	boolean firstOpen=true;
@@ -277,7 +249,7 @@ public class Spaceship extends Application {
 	Timeline schermataPunteggio= new Timeline(new KeyFrame(
 			Duration.millis(1000), 
 			x -> costruisciInterfaccia(3)));
-	
+
 	//MUSICA DI SOTTOFONDO
 	AudioClip musicaSottofondo= new AudioClip(getClass().getResource("musicaEpicaSottofondo.mp3").toExternalForm());
 	AudioClip suonoEsplosione= new AudioClip(getClass().getResource("Esplosione.mp3").toExternalForm());
@@ -314,7 +286,7 @@ public class Spaceship extends Application {
 	DropShadow dropShadow1 = new DropShadow();
 	DropShadow effettoGameOver = new DropShadow();
 	DropShadow dropShadow = new DropShadow();
-	
+
 	public void start(Stage finestra) {
 		//definiamo degli effetti
 		dropShadow.setBlurType(BlurType.THREE_PASS_BOX);
@@ -329,7 +301,7 @@ public class Spaceship extends Application {
 		effettoGameOver.setRadius(30); //raggio di sfocatura
 		effettoGameOver.setSpread(0.7); //densità della sfocatura 
 		effettoGameOver.setColor(Color.INDIANRED);
-	//--------------------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------------------------------------------------------------------------------------
 		//CONFIGURAZIONE GENERALE SCHERMATA DI GIOCO
 		// settaggi sfondo
 		sfondo.setFitWidth(WIDTH_SFONDO);
@@ -402,7 +374,7 @@ public class Spaceship extends Application {
 		bHomeGioco.setLayoutX(OFFSET_ELEMENTI_MENU*3+POSIZIONAMENTO_ASSE_X_MENU+(POSIZIONE_X_SEPARATORE1-POSIZIONAMENTO_ASSE_X_MENU-WIDTH_PULSANTE_INFORMAZIONI)/2);
 		bHomeGioco.setLayoutY((HEIGTH_MENU_INFORMAZIONI+POSIZIONAMENTO_ASSE_Y_MENU-HEIGTH_PULSANTE_INFORMAZIONI)/2);
 		bHomeGioco.setEffect(dropShadow);
-//-------------------------------------------------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------------------------------------------------
 		//settaggi griglia a fine gioco
 		grigliaGiocoFinale.add(ePuntiFinale, 0, 0);
 		grigliaGiocoFinale.add(ePunteggioTOT, 1, 0);
@@ -424,18 +396,18 @@ public class Spaceship extends Application {
 		eBonusFinale.getStyleClass().add("testoGiocoFinale");
 		ePunteggioDaBonus.getStyleClass().add("testoGiocoFinale");
 		bHomeFinale.getStyleClass().add("pulsanteImpostazioni");
-		
+
 		bHomeFinale.setMaxWidth(WIDTH_GRIGLIA_FINALE);
 		bHomeFinale.setEffect(dropShadow);
 
 		eProporzioneFinale.setEffect(dropShadow);
 		ePuntiFinale.setEffect(dropShadow);
-		
+
 		grigliaGiocoFinale.setLayoutX((WIDTH_SCHERMO-WIDTH_GRIGLIA_FINALE)/2);
 		grigliaGiocoFinale.setLayoutY((HEIGTH_SCHERMO-HEIGTH_GRIGLIA_FINALE)/2-20);
-		
+
 		grigliaGiocoFinale.setVgap(10);
-		
+
 		//settaggio Titolo
 		eTitoloFinale.getStyleClass().add("titleFinale");
 		eTitoloFinale.setLayoutX((WIDTH_SCHERMO-WIDTH_TITOLO_HOME)/2);
@@ -446,7 +418,7 @@ public class Spaceship extends Application {
 		sfondoFinale.setLayoutX((WIDTH_SCHERMO-DIMENSIONI_X_SFONDO_FINALE)/2);
 		sfondoFinale.setLayoutY((HEIGTH_SCHERMO-DIMENSIONI_Y_SFONDO_FINALE)/2);
 		sfondoFinale.setEffect(dropShadow1);
-//------------------------------------------------------------------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------------
 		//CONFIGURAZIONE SCHERMATA HOME
 		//settaggio sfondo
 		sfondoHomeFirstOpen.setFitWidth(WIDTH_SFONDO_HOME);
@@ -475,121 +447,115 @@ public class Spaceship extends Application {
 		bResetGioco.setEffect(dropShadow);
 		bSettings.setEffect(dropShadow);
 		menu.setEffect(dropShadow1);
-		
+
 		//settaggio e stile Titolo
 		eTitle.setLayoutX((WIDTH_SCHERMO-WIDTH_TITOLO_HOME)/2);
 		eTitle.setLayoutY((HEIGTH_SCHERMO-HEIGTH_TITOLO_HOME)/2-130+OFFSET_Y_OGGETTI_MENU);
 		eTitle.getStyleClass().add("titleHome");
 		eTitle.setEffect(dropShadow);
-		
-//------------------------------------------------------------------------------------------------------------------------------------------------
-		//CONFIGURAZIONE SCHERMATA IMPOSTAZIONI
-		//settaggi oggetti impostazioni
-	    rbConLimiti.setSelected(true);
-	    
-	    volume.setShowTickMarks(true);
-	    volume.setShowTickLabels(true);
-	    volume.setMajorTickUnit(1);
-	    volume.setMinorTickCount(0);
-	    volume.setSnapToTicks(true);
 
-	    ckSottofondo.setSelected(false); //il suono di sottofondo è spento
-	    ckMissile.setSelected(true);
-	    ckEspolosione.setSelected(true);
-	    ckMunizioni.setSelected(true);
-	    //diamo le classi e gli effetti agli oggetti
-	    impostazioni.getStyleClass().add("sfondoImpostazioni");
-	    bHomeSettings.getStyleClass().add("pulsanteImpostazioni");
-	    bSave.getStyleClass().add("pulsanteImpostazioni");
-	    eImpostazioni.getStyleClass().add("titleImpostazioni");
-	    eModalitaGioco.getStyleClass().add("testoImpostazioni");
-	    eNumeroMuinizioniImpostazioni.getStyleClass().add("testoImpostazioni");
-	    eNumeroMuinizioniImpostazioni.getStyleClass().add("allinemantoCentratoImpostazioni");
-	    eDurataGioco.getStyleClass().add("testoImpostazioni");
-	    eDurataGioco.getStyleClass().add("allinemantoCentratoImpostazioni");
-	    eSuono.getStyleClass().add("testoImpostazioni");
-	    eVolumeSuono.getStyleClass().add("testoImpostazioni");
-	    eVolumeSuono.getStyleClass().add("allinemantoCentratoImpostazioni");
-	    eViteOggetto.getStyleClass().add("testoImpostazioni");
-	    eMeteorite.getStyleClass().add("testoImpostazioni");
-	    eMeteorite.getStyleClass().add("allinemantoCentratoImpostazioni");
-	    eUfo.getStyleClass().add("testoImpostazioni");
-	    eUfo.getStyleClass().add("allinemantoCentratoImpostazioni");
-	    ckSottofondo.getStyleClass().add("testoImpostazioniDettaglio");
-	    ckMissile.getStyleClass().add("testoImpostazioniDettaglio");
-	    ckEspolosione.getStyleClass().add("testoImpostazioniDettaglio");
-	    ckMunizioni.getStyleClass().add("testoImpostazioniDettaglio");
-	    rbSenzaLimiti.getStyleClass().add("testoImpostazioniDettaglio");
-	    rbConLimiti.getStyleClass().add("testoImpostazioniDettaglio");
-	    bHomeSettings.setEffect(dropShadow1);
-	    bSave.setEffect(dropShadow);
-	    impostazioni.setEffect(dropShadow1);
-	    eImpostazioni.setEffect(dropShadow1);
-	    eModalitaGioco.setEffect(dropShadow);
-	    eNumeroMuinizioniImpostazioni.setEffect(dropShadow);
-	    eDurataGioco.setEffect(dropShadow);
-	    eSuono.setEffect(dropShadow);
-	    eVolumeSuono.setEffect(dropShadow);
-	    eViteOggetto.setEffect(dropShadow);
-	    eMeteorite.setEffect(dropShadow);
-	    eUfo.setEffect(dropShadow);
-	    ckSottofondo.setEffect(dropShadow);
-	    ckMissile.setEffect(dropShadow);
-	    ckEspolosione.setEffect(dropShadow);
-	    ckMunizioni.setEffect(dropShadow);
-	    rbSenzaLimiti.setEffect(dropShadow);
-	    rbConLimiti.setEffect(dropShadow);
-	    //Aggiungiamo gli elementi alla griglia
-	    grigliaImpostazioni.add(eImpostazioni, 0, 0, 2, 1);//(0,0)
-	    grigliaImpostazioni.add(bHomeSettings, 2, 0);//(0,0)
-	    grigliaImpostazioni.add(eModalitaGioco, 0, 1, 2, 1);//(0,1)
-	    grigliaImpostazioni.add(rbSenzaLimiti, 0, 2);
-	    grigliaImpostazioni.add(eNumeroMuinizioniImpostazioni, 1, 2);
-	    grigliaImpostazioni.add(cNumeroMunizioni, 2, 2);
-	    grigliaImpostazioni.add(rbConLimiti, 0, 3);
-	    grigliaImpostazioni.add(eDurataGioco, 1, 3);
-	    grigliaImpostazioni.add(durataGioco, 2, 3);
-	    grigliaImpostazioni.add(eSuono, 0, 4, 3, 1);
-	    grigliaImpostazioni.add(eVolumeSuono, 0, 5);
-	    grigliaImpostazioni.add(volume, 1, 5, 2, 1);
-	    grigliaImpostazioni.add(ckSottofondo, 0, 6);
-	    grigliaImpostazioni.add(ckMissile, 1, 6);
-	    grigliaImpostazioni.add(ckEspolosione, 2, 6);
-	    grigliaImpostazioni.add(ckMunizioni, 1, 7);
-	    grigliaImpostazioni.add(eViteOggetto, 0, 8, 3, 1);
-	    grigliaImpostazioni.add(eMeteorite, 0, 9);
-	    grigliaImpostazioni.add(cViteMeteorite, 1, 9,2,1);
-	    grigliaImpostazioni.add(eUfo, 0, 10);
-	    grigliaImpostazioni.add(cViteUfo, 1, 10,2,1);
-	    grigliaImpostazioni.add(bSave, 0, 11,4,1);
-	    //do delle dimensioni al GridPane
-	    grigliaImpostazioni.add(dimensioneGrigliaColonna1, 0, 11);
-	    grigliaImpostazioni.add(dimensioneGrigliaColonna2, 1, 11);
-	    grigliaImpostazioni.add(dimensioneGrigliaColonna3, 2, 11);
-	    grigliaImpostazioni.add(dimensioneGrigliaX, 0, 11, 4, 1);
-	    grigliaImpostazioni.add(dimensioneGrigliaY, 3, 0, 1, 12);
-	    grigliaImpostazioni.setPadding(new Insets(10,10,10,10));
-	    grigliaImpostazioni.setHgap(10);
-	    grigliaImpostazioni.setVgap(10);
-	    grigliaImpostazioni.setPrefWidth(1000);
-	    grigliaImpostazioni.getStyleClass().add("grigliaImpstazioni");
-	    grigliaImpostazioni.setLayoutX((WIDTH_SCHERMO-DIMENSIONI_X_GRIDPANE-40)/2);
-	    grigliaImpostazioni.setLayoutY((HEIGTH_SCHERMO-DIMENSIONI_Y_GRIDPANE-90)/2);
-	    impostazioni.setLayoutX((WIDTH_SCHERMO-DIMENSIONI_X_SFONDO_IMPOSTAZIONI)/2);
-	    impostazioni.setLayoutY((HEIGTH_SCHERMO-DIMENSIONI_Y_SFONDO_IMPOSTAZIONI)/2);
-	    bSave.setMaxWidth(DIMENSIONI_X_GRIDPANE);
+		//------------------------------------------------------------------------------------------------------------------------------------------------
+		//CONFIGURAZIONE SCHERMATA IMPOSTAZIONI
+		rbConLimiti.setSelected(true);
+
+		volume.setShowTickMarks(true);
+		volume.setShowTickLabels(true);
+		volume.setMajorTickUnit(1);
+		volume.setMinorTickCount(0);
+		volume.setSnapToTicks(true);
+
+		ckSottofondo.setSelected(suonoSottofondoAttivo);
+		ckMissile.setSelected(true);
+		ckEspolosione.setSelected(true);
+		ckMunizioni.setSelected(true);
+		//diamo le classi e gli effetti agli oggetti
+		impostazioni.getStyleClass().add("sfondoImpostazioni");
+		bHomeSettings.getStyleClass().add("pulsanteImpostazioni");
+		bSave.getStyleClass().add("pulsanteImpostazioni");
+		eImpostazioni.getStyleClass().add("titleImpostazioni");
+		eModalitaGioco.getStyleClass().add("testoImpostazioni");
+		eNumeroMuinizioniImpostazioni.getStyleClass().add("testoImpostazioni");
+		eNumeroMuinizioniImpostazioni.getStyleClass().add("allinemantoCentratoImpostazioni");
+		eDurataGioco.getStyleClass().add("testoImpostazioni");
+		eDurataGioco.getStyleClass().add("allinemantoCentratoImpostazioni");
+		eSuono.getStyleClass().add("testoImpostazioni");
+		eVolumeSuono.getStyleClass().add("testoImpostazioni");
+		eVolumeSuono.getStyleClass().add("allinemantoCentratoImpostazioni");
+		eViteOggetto.getStyleClass().add("testoImpostazioni");
+		eMeteorite.getStyleClass().add("testoImpostazioni");
+		eMeteorite.getStyleClass().add("allinemantoCentratoImpostazioni");
+		eUfo.getStyleClass().add("testoImpostazioni");
+		eUfo.getStyleClass().add("allinemantoCentratoImpostazioni");
+		ckSottofondo.getStyleClass().add("testoImpostazioniDettaglio");
+		ckMissile.getStyleClass().add("testoImpostazioniDettaglio");
+		ckEspolosione.getStyleClass().add("testoImpostazioniDettaglio");
+		ckMunizioni.getStyleClass().add("testoImpostazioniDettaglio");
+		rbSenzaLimiti.getStyleClass().add("testoImpostazioniDettaglio");
+		rbConLimiti.getStyleClass().add("testoImpostazioniDettaglio");
+		bHomeSettings.setEffect(dropShadow1);
+		bSave.setEffect(dropShadow);
+		impostazioni.setEffect(dropShadow1);
+		eImpostazioni.setEffect(dropShadow1);
+		eModalitaGioco.setEffect(dropShadow);
+		eNumeroMuinizioniImpostazioni.setEffect(dropShadow);
+		eDurataGioco.setEffect(dropShadow);
+		eSuono.setEffect(dropShadow);
+		eVolumeSuono.setEffect(dropShadow);
+		eViteOggetto.setEffect(dropShadow);
+		eMeteorite.setEffect(dropShadow);
+		eUfo.setEffect(dropShadow);
+		ckSottofondo.setEffect(dropShadow);
+		ckMissile.setEffect(dropShadow);
+		ckEspolosione.setEffect(dropShadow);
+		ckMunizioni.setEffect(dropShadow);
+		rbSenzaLimiti.setEffect(dropShadow);
+		rbConLimiti.setEffect(dropShadow);
+		//Aggiungiamo gli elementi alla griglia
+		grigliaImpostazioni.add(eImpostazioni, 0, 0, 2, 1);//(0,0)
+		grigliaImpostazioni.add(bHomeSettings, 2, 0);//(0,0)
+		grigliaImpostazioni.add(eModalitaGioco, 0, 1, 2, 1);//(0,1)
+		grigliaImpostazioni.add(rbSenzaLimiti, 0, 2);
+		grigliaImpostazioni.add(eNumeroMuinizioniImpostazioni, 1, 2);
+		grigliaImpostazioni.add(cNumeroMunizioni, 2, 2);
+		grigliaImpostazioni.add(rbConLimiti, 0, 3);
+		grigliaImpostazioni.add(eDurataGioco, 1, 3);
+		grigliaImpostazioni.add(durataGioco, 2, 3);
+		grigliaImpostazioni.add(eSuono, 0, 4, 3, 1);
+		grigliaImpostazioni.add(eVolumeSuono, 0, 5);
+		grigliaImpostazioni.add(volume, 1, 5, 2, 1);
+		grigliaImpostazioni.add(ckSottofondo, 0, 6);
+		grigliaImpostazioni.add(ckMissile, 1, 6);
+		grigliaImpostazioni.add(ckEspolosione, 2, 6);
+		grigliaImpostazioni.add(ckMunizioni, 1, 7);
+		grigliaImpostazioni.add(eViteOggetto, 0, 8, 3, 1);
+		grigliaImpostazioni.add(eMeteorite, 0, 9);
+		grigliaImpostazioni.add(cViteMeteorite, 1, 9,2,1);
+		grigliaImpostazioni.add(eUfo, 0, 10);
+		grigliaImpostazioni.add(cViteUfo, 1, 10,2,1);
+		grigliaImpostazioni.add(bSave, 0, 11,4,1);
+		//do delle dimensioni al GridPane
+		grigliaImpostazioni.setPadding(new Insets(10,10,10,10));
+		grigliaImpostazioni.setHgap(10);
+		grigliaImpostazioni.setVgap(10);
+		grigliaImpostazioni.setPrefWidth(1000);
+		grigliaImpostazioni.getStyleClass().add("grigliaImpstazioni");
+		grigliaImpostazioni.setLayoutX((WIDTH_SCHERMO-DIMENSIONI_X_GRIDPANE-40)/2);
+		grigliaImpostazioni.setLayoutY((HEIGTH_SCHERMO-DIMENSIONI_Y_GRIDPANE-90)/2);
+		impostazioni.setLayoutX((WIDTH_SCHERMO-DIMENSIONI_X_SFONDO_IMPOSTAZIONI)/2);
+		impostazioni.setLayoutY((HEIGTH_SCHERMO-DIMENSIONI_Y_SFONDO_IMPOSTAZIONI)/2);
+		bSave.setMaxWidth(DIMENSIONI_X_GRIDPANE);
 		//aggiungiamo i due radioButton alla lista delle modalità del gioco
 		rbConLimiti.setToggleGroup(modalitaDiGioco);
 		rbSenzaLimiti.setToggleGroup(modalitaDiGioco);
-		
+
 		Scene scena = new Scene(schermo, WIDTH_SCHERMO, HEIGTH_SCHERMO);
 		scena.getStylesheets().add("it/edu/iisgubbio/giocoFinale/StyleSpaceShip.css");
-		
+
 		//settiamo le variabili per il gioco
 		controllaImpostazioni();
-		
+
 		costruisciInterfaccia(0); //costruiamo la schermata home
-		
+
 		bStartGioco.setOnAction(e->gestisciInterfaccia(e));
 		bResetGioco.setOnAction(e->gestisciInterfaccia(e));
 		bSettings.setOnAction(e->gestisciInterfaccia(e));
@@ -597,16 +563,16 @@ public class Spaceship extends Application {
 		bHomeSettings.setOnAction(e->gestisciInterfaccia(e));
 		bSave.setOnAction(e->controllaImpostazioni());
 		bHomeFinale.setOnAction(e->gestisciInterfaccia(e));
-		
+
 		scena.setOnKeyPressed(e -> pigiato(e));
 		scena.setOnKeyReleased(e -> rilasciato(e));
-		
+
 		//finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();
 	}
-
+	
 	public void metodoLampeggiaNavicella() {
 		if(navicella.getOpacity()==0.5) {
 			navicella.setOpacity(1);
@@ -614,26 +580,24 @@ public class Spaceship extends Application {
 			navicella.setOpacity(0.5);
 		}
 	}
-
+	
+	/**
+	 * metodo che all'inizio del gioco o quando si pigia save, aggiorna i valori utilizzati per i vari casi
+	 */
 	public void controllaImpostazioni() {
-		//cambiamo la VITA DEGLI OGGETTI nel gioco (meteore, ufo)
+		//VITE OGGETTI
 		int nuovaVitaMeteorite= Integer.parseInt(cViteMeteorite.getText());
 		int nuovaVitaUFO= Integer.parseInt(cViteUfo.getText());
-		//una volta eseguito il metodo le vite degli oggetti vengono subito aggiornate
 		for (int n = 0; n < nOggetti; n++) {
 			if(oggettoNellaPosizione[n]!=2) {
-				//System.out.println("METEORITE:");
 				viteRimasteOggetti[n]=nuovaVitaMeteorite;
 			}else{
-				//System.out.println("UFO:");
 				viteRimasteOggetti[n]=nuovaVitaUFO;
 			}
-			//System.out.println(" impostazioni: "+oggettoNellaPosizione[n]+" = "+vettoreViteOggettiRimaste[n]);
 		}
 		viteMeteorite=nuovaVitaMeteorite;
 		viteUFO=nuovaVitaUFO;
 		//SUONO
-		//volume
 		boolean volumeCambiato=false;
 		double volumeSuoni= volume.getValue()/10;
 		if(volumeSuoni!=musicaSottofondo.getVolume()) {
@@ -646,7 +610,6 @@ public class Spaceship extends Application {
 		suonoSparoMissile.setVolume(volumeSuoni);
 		suonoGameOver.setVolume(volumeSuoni);
 		suonoVittoria.setVolume(volumeSuoni);
-		//sottofondo play o stop
 		if(ckSottofondo.isSelected() && !suonoSottofondoAttivo || volumeCambiato && ckSottofondo.isSelected()) {
 			musicaSottofondo.play();
 		}else if(!ckSottofondo.isSelected() && suonoSottofondoAttivo){
@@ -654,7 +617,6 @@ public class Spaceship extends Application {
 		}
 		suonoSottofondoAttivo=ckSottofondo.isSelected();
 		//MODALITA DI GIOCO
-		//modalità
 		if(Integer.parseInt(durataGioco.getText())<10) {
 			tempoDiSpostamentoTOT=10;
 			durataGioco.setText(""+10);
@@ -664,11 +626,11 @@ public class Spaceship extends Application {
 		}else {
 			tempoDiSpostamentoTOT=Integer.parseInt(durataGioco.getText());
 		}
-		valoreSpostamentoSfondo = (WIDTH_SFONDO-1000)/(tempoDiSpostamentoTOT*1000)*25;
-		
 		if(rbConLimiti.isSelected()) {
+			valoreSpostamentoSfondo = (WIDTH_SFONDO-1000)/(tempoDiSpostamentoTOT*1000)*25;
 			modalitaGiocoIllimitato=false;
 		}else if(rbSenzaLimiti.isSelected()) {
+			valoreSpostamentoNavicella=(WIDTH_SFONDO-1000)/(25*1000)*25;
 			modalitaGiocoIllimitato=true;
 		}
 		int nuovoNumeroMunizioni=Integer.parseInt(cNumeroMunizioni.getText());
@@ -685,11 +647,14 @@ public class Spaceship extends Application {
 			statoMunizione = new boolean[numeroMunizioni];
 			riempiMunizioni();
 		}
-		
 		bStartGioco.setDisable(true);
 		bResetGioco.setDisable(false);
 	}
-	
+
+	/**
+	 * cambia interfaccia in base al pulsante che pigi
+	 * @param pulsante è l'evento 
+	 */
 	public void gestisciInterfaccia(Event pulsante) {
 		int interfaccia=-1;
 		String evento=pulsante.getSource().toString();
@@ -718,28 +683,10 @@ public class Spaceship extends Application {
 		costruisciInterfaccia(interfaccia);
 	}
 	
-	public int refreshVitaOggetto(int posizione){ //posizione dell'oggetto nel vettore "oggettoNellaPosizione"
-		if(oggettoNellaPosizione[posizione]!=2) { //meteorite non ufo
-			viteRimasteOggetti[posizione]=viteMeteorite;
-			return viteMeteorite;
-		}else {
-			viteRimasteOggetti[posizione]=viteUFO;
-			return viteUFO;
-		}
-	}
-	
-	public void riempiMunizioni() {
-		for (int nM = 0; nM < numeroMunizioni; nM++) {
-			Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
-			statoMunizione[nM]=false;
-			munizioni[nM] = new ImageView(immagineMissile);
-			munizioni[nM].setFitHeight(HEIGTH_MISSILE);
-			munizioni[nM].setFitWidth(WIDTH_MISSILE);
-			munizioni[nM].setLayoutX(WIDTH_SCHERMO);
-			schermo.getChildren().add(munizioni[nM]);
-		}
-	}
-	
+	/**
+	 * crea l'interfaccia
+	 * @param interfaccia che interfaccia costruire
+	 */
 	public void costruisciInterfaccia(int interfaccia) {
 		schermo.getChildren().clear();
 		switch(interfaccia) {
@@ -752,7 +699,6 @@ public class Spaceship extends Application {
 			muoviSfondo.stop();
 			muoviOggetti.stop();
 			collisioniOggettiNavicella.stop();
-			
 			if(firstOpen) {
 				bStartGioco.setDisable(false);
 				bResetGioco.setDisable(true);
@@ -824,7 +770,6 @@ public class Spaceship extends Application {
 				sfocatura.setLayoutX(WIDTH_SFONDO); //posizioniamo la sfocatura fuori dallo schermo
 			}
 			schermo.getChildren().add(sfocatura);
-			
 			//costruiamo il menu delle informazioni
 			schermo.getChildren().add(informazioni);
 			schermo.getChildren().add(separaInformazioni1);
@@ -839,26 +784,24 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(eMunizioni);
 			schermo.getChildren().add(eNumeroMunizioni);
 			schermo.getChildren().add(bHomeGioco);
-			
+
 			// movimento navicella
 			muoviNavicella.setCycleCount(Animation.INDEFINITE);
 			muoviNavicella.play();
-			// controlla collisioni
+			// controlla collisioni missile oggetto
 			controllaCollisione.setCycleCount(Animation.INDEFINITE);
 			controllaCollisione.play();
+			//controlla collisioni oggetto navicella
+			collisioniOggettiNavicella.setCycleCount(Animation.INDEFINITE);
+			collisioniOggettiNavicella.play();
 			// movimento sfondo
-//			tempo1=System.currentTimeMillis();
-//			contaRipetizioniSpostamento=0;
 			muoviSfondo.setCycleCount(Animation.INDEFINITE);
 			muoviSfondo.play();
 			// movimento oggetti
 			muoviOggetti.setCycleCount(Animation.INDEFINITE);
 			muoviOggetti.play();
-			//controlla collisioni
-			collisioniOggettiNavicella.setCycleCount(Animation.INDEFINITE);
-			collisioniOggettiNavicella.play();
 			break;
-			
+
 		case 2:
 			//costruiamo la schermata delle impostazioni
 			if(modalitaGiocoIllimitato) {
@@ -895,10 +838,10 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(sfondoHomeTrasperente);
 			schermo.getChildren().add(impostazioni);
 			schermo.getChildren().add(grigliaImpostazioni);
-			
-			
+
+
 			break;
-			
+
 		case 3:
 			muoviSfondo.stop();
 			muoviNavicella.stop();
@@ -908,7 +851,7 @@ public class Spaceship extends Application {
 			navicella.setOpacity(1);
 			giocoIniziato=false;
 			fineGioco=true;
-			
+
 			int punteggioBonus=numeroMunizioniAttuali*5;//le munizioni rimaste moltiplicate per 5
 			if(avvenutaCollisioneOggNav) {
 				eTitoloFinale.setText("GAME OVER");
@@ -922,20 +865,50 @@ public class Spaceship extends Application {
 			}
 			int punteggioVite=numeroViteRimaste*100; //le vite rimanenti moltiplicate per 100
 			int punteggioTotale=punteggioAttuale+punteggioBonus+punteggioVite;
-			
+
 			ePunteggioDaBonus.setText(""+punteggioBonus);
 			ePunteggioDaVita.setText(""+punteggioVite);
 			ePunteggioDaPunteggio.setText(""+punteggioAttuale);
 			ePunteggioTOT.setText(""+punteggioTotale);
-			
+
 			sfondo.setLayoutX(-WIDTH_SFONDO+WIDTH_SCHERMO);
-			
+
 			schermo.getChildren().add(sfondo);
 			schermo.getChildren().add(sfondoHomeTrasperente);
 			schermo.getChildren().add(sfondoFinale);
 			schermo.getChildren().add(eTitoloFinale);
 			schermo.getChildren().add(grigliaGiocoFinale);
 			break;
+		}
+	}
+	
+	/**
+	 * metodo utile per aggiornare la vita agli oggetti
+	 * @param posizione la posizione dell'oggetto che si esamina nel vettore "oggettoNellaPosizione"
+	 * @return ritorna la vita dell'oggetto richiesto
+	 */
+	public int refreshVitaOggetto(int posizione){
+		if(oggettoNellaPosizione[posizione]!=2) {
+			viteRimasteOggetti[posizione]=viteMeteorite;
+			return viteMeteorite;
+		}else {
+			viteRimasteOggetti[posizione]=viteUFO;
+			return viteUFO;
+		}
+	}
+	
+	/**
+	 * riempie il numero di munizioni rendendole nuovamente disponibili tutte
+	 */
+	public void riempiMunizioni() {
+		for (int nM = 0; nM < numeroMunizioni; nM++) {
+			Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
+			statoMunizione[nM]=false;
+			munizioni[nM] = new ImageView(immagineMissile);
+			munizioni[nM].setFitHeight(HEIGTH_MISSILE);
+			munizioni[nM].setFitWidth(WIDTH_MISSILE);
+			munizioni[nM].setLayoutX(WIDTH_SCHERMO);
+			schermo.getChildren().add(munizioni[nM]);
 		}
 	}
 	public void metodoSpostaAllaFineNavicella(){
@@ -951,16 +924,16 @@ public class Spaceship extends Application {
 			costruisciInterfaccia(3);
 		}
 	}
+	/**
+	 * valore che sposta lo sfondo
+	 */
 	public void aggiornaPosizioneSfondo() {
 		posizioneSfondoX -= valoreSpostamentoSfondo;
 		posizioneSfondo2X -= valoreSpostamentoSfondo;
 		double posizioneFinaleSfondo = posizioneSfondoX + WIDTH_SFONDO;
 		double posizioneFinaleSfondo2 = posizioneSfondo2X + WIDTH_SFONDO;
 		if(!modalitaGiocoIllimitato) {
-//			contaRipetizioniSpostamento++;
 			if (posizioneFinaleSfondo <= WIDTH_SCHERMO) {
-//				tempo2=System.currentTimeMillis();
-//				System.out.println(tempo1-tempo2+ " ripetizioni: " +contaRipetizioniSpostamento);
 				giocoIniziato=false;
 				for(int i=0; i<vettoreOggetti.length; i++) {
 					schermo.getChildren().remove(vettoreOggetti[i]);
@@ -985,12 +958,12 @@ public class Spaceship extends Application {
 				posizioneSfondoX=posizioneFinaleSfondo2-1000; //sotraiamo mille cosi da nascondere la parte dello sfondo più scura
 			}
 			if(posizioneFinaleSfondo2<=0) {
-				posizioneSfondo2X=posizioneFinaleSfondo;
+				posizioneSfondo2X=posizioneFinaleSfondo-2;
 			}
 			sfondo.setLayoutX(posizioneSfondoX);
 			sfondo2.setLayoutX(posizioneSfondo2X);
 		}
-		//approfittamo dello spostamento dello sfondo per far anche cambiare colore al numero di munizioni quando è zero
+		//approfittiamo dello spostamento dello sfondo per far anche cambiare colore al numero di munizioni quando è zero
 		if(System.currentTimeMillis() - tempoPassato >= 500 && numeroMunizioniAttuali==0) {
 			if(bianco) {
 				eNumeroMunizioni.setTextFill(Color.WHITE);
@@ -1002,15 +975,16 @@ public class Spaceship extends Application {
 			tempoPassato = System.currentTimeMillis();
 		}
 	}
-
+	
+	/**
+	 * metodo che sposta in sequenza gli oggetti
+	 */
 	public void spostaOggetti() {
-		//scegliamo l'oggetto
 		indiceOggetto++;
 		if(indiceOggetto==nOggetti) {
 			indiceOggetto=0;
 		}
 		oggettoAttuale=vettoreOggetti[indiceOggetto];
-		//spostiamo o risposizioniamo l'oggetto
 		if(oggettoAttuale.getLayoutX()<=-DIMENSION_OGGETTI) {
 			riposizionaOggetto(indiceOggetto);
 		}else {
@@ -1018,7 +992,11 @@ public class Spaceship extends Application {
 			vettoreEllissiCollisione[indiceOggetto].setCenterX((oggettoAttuale.getLayoutX()+DIMENSION_OGGETTI/2)-3);
 		}
 	}
-
+	
+	/**
+	 * serve per riposizionare gli oggetti prima dellla parte visibile dello schermo
+	 * @param posizione la posizione dell'oggetto nel "vettoreOggetti"
+	 */
 	public void riposizionaOggetto(int posizione) {
 		int posizioneY;
 		int posizioneX;
@@ -1030,11 +1008,12 @@ public class Spaceship extends Application {
 		vettoreEllissiCollisione[posizione].setCenterY(posizioneY+DIMENSION_OGGETTI/2);
 		refreshVitaOggetto(posizione); //aggiorniamo la vita all'oggetto
 	}
-
+	/**
+	 * fa comparire il missile
+	 */
 	public void spara() {
 		//aspetto che pasino 100 millisecondi
 		if (System.currentTimeMillis() - tempoScorsoMissile >= 100 && numeroMunizioniAttuali!=0) {
-			//cambio colore al numero dei punti
 			if (numeroMunizioniAttuali<=10 && numeroMunizioniAttuali>5) {
 				eNumeroMunizioni.setTextFill(Color.ORANGE);
 			}else if(numeroMunizioniAttuali<=5) {
@@ -1053,15 +1032,12 @@ public class Spaceship extends Application {
 			if(ckMunizioni.isSelected()) {
 				suonoMunizioniFinite.play();
 			}
-			
 			tempoScorsoMissile = System.currentTimeMillis();
 		}
-		//System.out.println("sparato");
 	}
-
+	
 	public void pigiato(KeyEvent pulsante) {
 		if(giocoIniziato) {
-			//System.out.println(pulsante.getText());
 			switch (pulsante.getText().toLowerCase()) {
 			case "p":
 				spara();
@@ -1081,7 +1057,6 @@ public class Spaceship extends Application {
 			}
 		}
 	}
-
 	public void rilasciato(KeyEvent pulsante) {
 		switch (pulsante.getText().toLowerCase()) {
 		case "w":
@@ -1098,7 +1073,6 @@ public class Spaceship extends Application {
 			break;
 		}
 	}
-
 	public void aggiornaPosizioneNavicella() {
 		for (int nM = 0; nM < munizioniUtilizzate; nM++) {
 			munizioni[nM].setLayoutX(munizioni[nM].getLayoutX() + valoreSpostamentoNavicella + 3);
@@ -1108,14 +1082,14 @@ public class Spaceship extends Application {
 			navicella.setLayoutY(posizioneNaviciella[1]);
 			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
 			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
-			
+
 		}
 		if(spostaGIU && navicella.getLayoutY()<=HEIGTH_SCHERMO-WIDTH_NAVICELLA) {
 			posizioneNaviciella[1]+=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
 			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
 			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
-			
+
 		}if(spostaAVANTI && navicella.getLayoutX()<=WIDTH_SCHERMO-HEIGTH_NAVICELLA) {
 			posizioneNaviciella[0]+=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
@@ -1129,7 +1103,10 @@ public class Spaceship extends Application {
 			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
 		}
 	}
-
+	
+	/**
+	 * controlla le collisioni tra il missile e l'oggetto
+	 */
 	public void metodoControllaCollisione() {
 		ImageView oggettoSottopostoBound;
 		numeroOggettoBound++;
@@ -1140,9 +1117,8 @@ public class Spaceship extends Application {
 		boundOggetti = oggettoSottopostoBound.getBoundsInParent();
 
 		ImageView missileSottopostoBound;
-		//long start = System.nanoTime();
 		for (int i = 0; i < munizioniUtilizzate; i++) {
-			if (!statoMunizione[i]) { // controlliamo se il missile è esploso o scomparso
+			if (!statoMunizione[i]) { // controlliamo se il missile non è nella schermata
 				missileSottopostoBound = munizioni[i];
 				boundMissile = missileSottopostoBound.getBoundsInParent();
 				if (missileSottopostoBound.getLayoutX() > WIDTH_SCHERMO) {
@@ -1151,18 +1127,14 @@ public class Spaceship extends Application {
 				}
 				if (boundMissile.intersects(boundOggetti)) {
 					int posizioneXMissile, posizioneXMeteorie, posizioneYMissile;
-					// prendiamo le posizione del missile e gli oggetti
 					posizioneXMissile = (int) (missileSottopostoBound.getLayoutX() + WIDTH_MISSILE);
 					posizioneYMissile = (int) (missileSottopostoBound.getLayoutY());
 					posizioneXMeteorie = (int) (oggettoSottopostoBound.getLayoutX());
-					// spostiamo il missile e gli oggetti
-					viteRimasteOggetti[numeroOggettoBound]--; //scaliamo la vita all'oggetto colpito
+					viteRimasteOggetti[numeroOggettoBound]--;
 					if(viteRimasteOggetti[numeroOggettoBound]==0) {
 						riposizionaOggetto(numeroOggettoBound);
-						//aggiorniamo la vita all'oggetto e la aggiungioamo come punteggio
 						punteggioAttuale+=refreshVitaOggetto(numeroOggettoBound)*10;
 						eNumeroPunti.setText(""+punteggioAttuale);
-						// posizioniamo l'esplosione
 						ImageView esplosione = new ImageView(animazioneEsplosione);
 						esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
 						esplosione.setFitWidth(WIDTH_ESPLOSIONE);
@@ -1174,35 +1146,17 @@ public class Spaceship extends Application {
 						}
 						rimuoviOggetto(500, esplosione);
 					}
-					rimuoviOggetto(10, missileSottopostoBound); // spostiamo il missile ad una posizione fuori dalla
-																// portata degli oggetti
+					rimuoviOggetto(10, missileSottopostoBound);
 					statoMunizione[i] = true;
-					// conta++;
-					/*
-					 * System.out.println(posizioneXMissile+"+"+posizioneXMeteorie+"/2"+" = "+(
-					 * posizioneXMissile+posizioneXMeteorie)/2);
-					 * System.out.println(posizioneYMissile+"+"+HEIGTH_ESPLOSIONE+"/2"+" = "+(
-					 * posizioneYMissile+HEIGTH_ESPLOSIONE/2));
-					 * System.out.println("questa è la "+conta+" volta che compare l'esplosione");
-					 */
-					
 				}
 			}
 		}
-		// long end = System.nanoTime();
-		// System.out.println("c'ho messo "+(end-start));
 	}
 	
-	public void rimuoviOggetto(int traQuantoTempo, ImageView oggetto) {
-		Timeline eliminaOggetto;
-		eliminaOggetto = new Timeline(new KeyFrame(Duration.millis(traQuantoTempo), x -> eseguiRimozione(oggetto)));
-		eliminaOggetto.setCycleCount(1);
-		eliminaOggetto.play();
-	}
-	public void eseguiRimozione(ImageView oggetto) {
-		schermo.getChildren().remove(oggetto);
-	}
-	
+	/**
+	 * controlla la collisione tra la navicella e gli oggetti
+	 */
+
 	int posizioneCollisioneOggetto=0;
 	public void metodoCollisioniOggettiNavicella() {
 		posizioneCollisioneOggetto++;
@@ -1211,18 +1165,18 @@ public class Spaceship extends Application {
 		}
 		boolean intersezione=false;
 		Shape intersectPunta = Shape.intersect(ellisseOriz, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
-        if (intersectPunta.getBoundsInLocal().getWidth() >= 30){
-            intersezione=true;
-        }
-        Shape intersectAli = Shape.intersect(ellisseVert, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
-        if (intersectAli.getBoundsInLocal().getWidth() >= 15){
-            intersezione=true;
-        }
-        
-        if(intersezione) {
+		if (intersectPunta.getBoundsInLocal().getWidth() >= 30){
+			intersezione=true;
+		}
+		Shape intersectAli = Shape.intersect(ellisseVert, vettoreEllissiCollisione[posizioneCollisioneOggetto]);
+		if (intersectAli.getBoundsInLocal().getWidth() >= 15){
+			intersezione=true;
+		}
+
+		if(intersezione) {
 			int posizioneXMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutX());
 			int posizioneYMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutY());
-            riposizionaOggetto(posizioneCollisioneOggetto);
+			riposizionaOggetto(posizioneCollisioneOggetto);
 			rimuoviOggetto(10, vettoreCuori[numeroViteRimaste-1]);
 			numeroViteRimaste--;
 			ImageView esplosione=new ImageView(animazioneEsplosione);
@@ -1256,14 +1210,31 @@ public class Spaceship extends Application {
 				rimuoviOggetto(500, esplosione);
 				if(lampeggiamento) {
 					lampeggiaNavicella.stop();
+					navicella.setOpacity(1);
 				}else {
 					lampeggiamento=true;
 				}
 				lampeggiaNavicella.setCycleCount(4);
 				lampeggiaNavicella.play();
 			}
-        }
+		}
 	}
+	
+	/**
+	 * metodo utile per rimuovere gli oggetti dallo schermo
+	 * @param traQuantoTempo tempo dopo il quel si vuole rimuovere l'immagine
+	 * @param oggetto l'immagine che si vuole rimuovere
+	 */
+	public void rimuoviOggetto(int traQuantoTempo, ImageView oggetto) {
+		Timeline eliminaOggetto;
+		eliminaOggetto = new Timeline(new KeyFrame(Duration.millis(traQuantoTempo), x -> eseguiRimozione(oggetto)));
+		eliminaOggetto.setCycleCount(1);
+		eliminaOggetto.play();
+	}
+	public void eseguiRimozione(ImageView oggetto) {
+		schermo.getChildren().remove(oggetto);
+	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
