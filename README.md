@@ -32,3 +32,15 @@ dalle impostazioni si possono fare varie cose:
 5-si può scegliere la vita degli oggetti che si muovono
 
 Per salvare le impostazioni, una volta modificati i valori bisognerà salvare attraverso il pulsante "Save", se non viene fatto ciò e si torna alla home tutti i valori non salvati torneranno come prima, alcune CheckBox, non si resetteranno dato che non hanno bisogno di essere salvate.
+## comandi
+i comandi utili per giocare sono i seguenti (non fa differenza se si ha il Block Maiusc attivo o no):
+#### spostamento
+W: sposta la navicella verso l'alto
+
+S: sposta la navicella verso il basso
+
+A: sposta la navicella indietro
+
+D: sposta la navicella avanti
+#### spara
+P: sparare un missile
