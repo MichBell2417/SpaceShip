@@ -134,7 +134,6 @@ public class Spaceship extends Application {
 	final int HEIGTH_RECTANGLE_HOME=300;
 	final int WIDTH_TITOLO_HOME=250;
 	final int HEIGTH_TITOLO_HOME=50;
-
 	Label eTitle=new Label("Space Ship");
 	Button bStartGioco= new Button("Start");
 	Button bResetGioco= new Button("Reset");
@@ -178,7 +177,6 @@ public class Spaceship extends Application {
 	int numeroViteRimaste=numeroVite;
 	Image imamgineCuoreVita=new Image(getClass().getResourceAsStream("ImmagineCuroePerVite.png"));
 	ImageView vettoreCuori[]= new ImageView[numeroVite];
-
 
 	//IMPOSTAZIONI 
 	boolean suonoSottofondoAttivo=false;
@@ -459,13 +457,11 @@ public class Spaceship extends Application {
 		//------------------------------------------------------------------------------------------------------------------------------------------------
 		//CONFIGURAZIONE SCHERMATA IMPOSTAZIONI
 		rbConLimiti.setSelected(true);
-
 		volume.setShowTickMarks(true);
 		volume.setShowTickLabels(true);
 		volume.setMajorTickUnit(1);
 		volume.setMinorTickCount(0);
 		volume.setSnapToTicks(true);
-
 		ckSottofondo.setSelected(suonoSottofondoAttivo);
 		ckMissile.setSelected(true);
 		ckEspolosione.setSelected(true);
@@ -552,12 +548,9 @@ public class Spaceship extends Application {
 
 		Scene scena = new Scene(schermo, WIDTH_SCHERMO, HEIGTH_SCHERMO);
 		scena.getStylesheets().add("it/edu/iisgubbio/giocoFinale/StyleSpaceShip.css");
-
 		//settiamo le variabili per il gioco
 		controllaImpostazioni();
-
 		costruisciInterfaccia(0); //costruiamo la schermata home
-
 		bStartGioco.setOnAction(e->gestisciInterfaccia(e));
 		bResetGioco.setOnAction(e->gestisciInterfaccia(e));
 		bSettings.setOnAction(e->gestisciInterfaccia(e));
@@ -565,16 +558,14 @@ public class Spaceship extends Application {
 		bHomeSettings.setOnAction(e->gestisciInterfaccia(e));
 		bSave.setOnAction(e->controllaImpostazioni());
 		bHomeFinale.setOnAction(e->gestisciInterfaccia(e));
-
 		scena.setOnKeyPressed(e -> pigiato(e));
 		scena.setOnKeyReleased(e -> rilasciato(e));
-
-		//finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
+		finestra.resizableProperty().setValue(false); // blocca il ridimensionamento della finestra
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();
 	}
-	
+
 	public void metodoLampeggiaNavicella() {
 		if(navicella.getOpacity()==0.5) {
 			navicella.setOpacity(1);
@@ -582,7 +573,7 @@ public class Spaceship extends Application {
 			navicella.setOpacity(0.5);
 		}
 	}
-	
+
 	/**
 	 * metodo che all'inizio del gioco o quando si pigia save, aggiorna i valori utilizzati per i vari casi
 	 */
@@ -684,7 +675,7 @@ public class Spaceship extends Application {
 		}
 		costruisciInterfaccia(interfaccia);
 	}
-	
+
 	/**
 	 * crea l'interfaccia
 	 * @param interfaccia che interfaccia costruire
@@ -725,6 +716,7 @@ public class Spaceship extends Application {
 				schermo.getChildren().add(bSettings);
 			}
 			break;
+
 		case 1:
 			giocoIniziato=true;
 			//costruiamo la schermata per il gioco
@@ -900,7 +892,7 @@ public class Spaceship extends Application {
 			break;
 		}
 	}
-	
+
 	/**
 	 * metodo utile per aggiornare la vita agli oggetti
 	 * @param posizione la posizione dell'oggetto che si esamina nel vettore "oggettoNellaPosizione"
@@ -915,7 +907,7 @@ public class Spaceship extends Application {
 			return viteUFO;
 		}
 	}
-	
+
 	/**
 	 * riempie il numero di munizioni rendendole nuovamente disponibili tutte
 	 */
@@ -994,7 +986,7 @@ public class Spaceship extends Application {
 			tempoPassato = System.currentTimeMillis();
 		}
 	}
-	
+
 	/**
 	 * metodo che sposta in sequenza gli oggetti
 	 */
@@ -1011,7 +1003,7 @@ public class Spaceship extends Application {
 			vettoreEllissiCollisione[indiceOggetto].setCenterX((oggettoAttuale.getLayoutX()+DIMENSION_OGGETTI/2)-3);
 		}
 	}
-	
+
 	/**
 	 * serve per riposizionare gli oggetti prima dellla parte visibile dello schermo
 	 * @param posizione la posizione dell'oggetto nel "vettoreOggetti"
@@ -1054,7 +1046,7 @@ public class Spaceship extends Application {
 			tempoScorsoMissile = System.currentTimeMillis();
 		}
 	}
-	
+
 	public void pigiato(KeyEvent pulsante) {
 		if(giocoIniziato) {
 			switch (pulsante.getText().toLowerCase()) {
@@ -1101,15 +1093,14 @@ public class Spaceship extends Application {
 			navicella.setLayoutY(posizioneNaviciella[1]);
 			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
 			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
-
 		}
 		if(spostaGIU && navicella.getLayoutY()<=HEIGTH_SCHERMO-WIDTH_NAVICELLA) {
 			posizioneNaviciella[1]+=valoreSpostamentoNavicella;
 			navicella.setLayoutY(posizioneNaviciella[1]);
 			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
 			ellisseVert.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
-
-		}if(spostaAVANTI && navicella.getLayoutX()<=WIDTH_SCHERMO-HEIGTH_NAVICELLA) {
+		}
+		if(spostaAVANTI && navicella.getLayoutX()<=WIDTH_SCHERMO-HEIGTH_NAVICELLA) {
 			posizioneNaviciella[0]+=valoreSpostamentoNavicella;
 			navicella.setLayoutX(posizioneNaviciella[0]);
 			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
@@ -1122,7 +1113,7 @@ public class Spaceship extends Application {
 			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2-10);
 		}
 	}
-	
+
 	/**
 	 * controlla le collisioni tra il missile e l'oggetto
 	 */
@@ -1171,11 +1162,10 @@ public class Spaceship extends Application {
 			}
 		}
 	}
-	
+
 	/**
 	 * controlla la collisione tra la navicella e gli oggetti
 	 */
-
 	int posizioneCollisioneOggetto=0;
 	public void metodoCollisioniOggettiNavicella() {
 		posizioneCollisioneOggetto++;
@@ -1191,7 +1181,6 @@ public class Spaceship extends Application {
 		if (intersectAli.getBoundsInLocal().getWidth() >= 15){
 			intersezione=true;
 		}
-
 		if(intersezione) {
 			int posizioneXMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutX());
 			int posizioneYMeteorite=(int) (vettoreOggetti[posizioneCollisioneOggetto].getLayoutY());
@@ -1238,7 +1227,7 @@ public class Spaceship extends Application {
 			}
 		}
 	}
-	
+
 	/**
 	 * metodo utile per rimuovere gli oggetti dallo schermo
 	 * @param traQuantoTempo tempo dopo il quel si vuole rimuovere l'immagine
@@ -1253,7 +1242,7 @@ public class Spaceship extends Application {
 	public void eseguiRimozione(ImageView oggetto) {
 		schermo.getChildren().remove(oggetto);
 	}
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
