@@ -139,7 +139,7 @@ public class Spaceship extends Application {
 	Button bStartGioco= new Button("Start");
 	Button bResetGioco= new Button("Reset");
 	Button bSettings= new Button("Settings");
-	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("videoSfondoHome.gif"));
+	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("VideoSfondoHome.gif"));
 
 	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome);
 	Rectangle sfondoHomeTrasperente= new Rectangle(WIDTH_SCHERMO, HEIGTH_SCHERMO);
@@ -176,7 +176,7 @@ public class Spaceship extends Application {
 	Line separaInformazioni3= new Line(POSIZIONE_X_SEPARATORE3,POSIZIONAMENTO_ASSE_Y_MENU, POSIZIONE_X_SEPARATORE3, 100+POSIZIONAMENTO_ASSE_Y_MENU);
 	int numeroVite=3; //devono essere 3
 	int numeroViteRimaste=numeroVite;
-	Image imamgineCuoreVita=new Image(getClass().getResourceAsStream("immagineCuroePerVite.png"));
+	Image imamgineCuoreVita=new Image(getClass().getResourceAsStream("ImmagineCuroePerVite.png"));
 	ImageView vettoreCuori[]= new ImageView[numeroVite];
 
 
@@ -191,6 +191,8 @@ public class Spaceship extends Application {
 
 	int numeroLivelli=3;
 	boolean modalitaGiocoIllimitato=false; //modalità: true=illimitato false=limitato
+	long tempoStart;
+	long tempoSovpravvissuto=0;
 	Button bHomeSettings= new Button("HOME");
 	Button bSave= new Button("Save");
 	Region impostazioni= new Region(); 
@@ -630,7 +632,7 @@ public class Spaceship extends Application {
 			valoreSpostamentoSfondo = (WIDTH_SFONDO-1000)/(tempoDiSpostamentoTOT*1000)*25;
 			modalitaGiocoIllimitato=false;
 		}else if(rbSenzaLimiti.isSelected()) {
-			valoreSpostamentoNavicella=(WIDTH_SFONDO-1000)/(25*1000)*25;
+			valoreSpostamentoSfondo=(WIDTH_SFONDO-1000)/(25.0*1000)*25;
 			modalitaGiocoIllimitato=true;
 		}
 		int nuovoNumeroMunizioni=Integer.parseInt(cNumeroMunizioni.getText());
@@ -691,6 +693,9 @@ public class Spaceship extends Application {
 		schermo.getChildren().clear();
 		switch(interfaccia) {
 		case 0:
+			if(modalitaGiocoIllimitato) {
+				tempoSovpravvissuto+=System.currentTimeMillis()-tempoStart;
+			}
 			giocoIniziato=false;
 			//costruiamo la schermata home
 			schermo.getStyleClass().add("pain");
@@ -740,6 +745,10 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(ellisseVert);
 			if(resetGame) {
 				//nel caso si sia in modalità di reset
+				if(modalitaGiocoIllimitato) {
+					tempoSovpravvissuto=0;
+					tempoStart=System.currentTimeMillis();
+				}
 				fineGioco=false;
 				posizioneSfondoX = 0;
 				posizioneSfondo2X = WIDTH_SFONDO;
@@ -760,6 +769,9 @@ public class Spaceship extends Application {
 				resetGame=false;
 			}else{
 				//nel caso si sia in modalità normale
+				if(modalitaGiocoIllimitato) {
+					tempoStart=System.currentTimeMillis();
+				}
 				for (int n = 0; n < nOggetti; n++) {
 					schermo.getChildren().add(vettoreOggetti[n]);
 					schermo.getChildren().add(vettoreEllissiCollisione[n]);
@@ -784,7 +796,6 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(eMunizioni);
 			schermo.getChildren().add(eNumeroMunizioni);
 			schermo.getChildren().add(bHomeGioco);
-
 			// movimento navicella
 			muoviNavicella.setCycleCount(Animation.INDEFINITE);
 			muoviNavicella.play();
@@ -838,8 +849,6 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(sfondoHomeTrasperente);
 			schermo.getChildren().add(impostazioni);
 			schermo.getChildren().add(grigliaImpostazioni);
-
-
 			break;
 
 		case 3:
@@ -851,23 +860,33 @@ public class Spaceship extends Application {
 			navicella.setOpacity(1);
 			giocoIniziato=false;
 			fineGioco=true;
-
-			int punteggioBonus=numeroMunizioniAttuali*5;//le munizioni rimaste moltiplicate per 5
-			if(avvenutaCollisioneOggNav) {
-				eTitoloFinale.setText("GAME OVER");
-				eTitoloFinale.setTextFill(Color.DARKRED);
-				eTitoloFinale.setEffect(effettoGameOver);
-				punteggioBonus=0;
-			}else {
-				eTitoloFinale.setText("YOU WIN");
+			int punteggioBonus=0;//le munizioni rimaste moltiplicate per 5
+			int punteggioVite=0; //le vite rimanenti moltiplicate per 100
+			if(modalitaGiocoIllimitato) {
+				eTitoloFinale.setText("THE END");
 				eTitoloFinale.setTextFill(Color.WHITE);
 				eTitoloFinale.setEffect(dropShadow1);
+				tempoSovpravvissuto+=System.currentTimeMillis()-tempoStart;
+				punteggioBonus=(int)(tempoSovpravvissuto)/1000*10; //tempo sopravvissuto in Sec per 10
+				ePunteggioDaVita.setText("non contato");
+			}else {
+				if(avvenutaCollisioneOggNav) {
+					eTitoloFinale.setText("GAME OVER");
+					eTitoloFinale.setTextFill(Color.DARKRED);
+					eTitoloFinale.setEffect(effettoGameOver);
+					punteggioBonus=0;
+				}else {
+					eTitoloFinale.setText("YOU WIN");
+					eTitoloFinale.setTextFill(Color.WHITE);
+					eTitoloFinale.setEffect(dropShadow1);
+					punteggioBonus=numeroMunizioniAttuali*5;
+				}
+				punteggioVite=numeroViteRimaste*100;
+				ePunteggioDaVita.setText(""+punteggioVite);
 			}
-			int punteggioVite=numeroViteRimaste*100; //le vite rimanenti moltiplicate per 100
 			int punteggioTotale=punteggioAttuale+punteggioBonus+punteggioVite;
 
 			ePunteggioDaBonus.setText(""+punteggioBonus);
-			ePunteggioDaVita.setText(""+punteggioVite);
 			ePunteggioDaPunteggio.setText(""+punteggioAttuale);
 			ePunteggioTOT.setText(""+punteggioTotale);
 
