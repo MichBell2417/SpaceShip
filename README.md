@@ -1,7 +1,8 @@
 # spaceship
 ## Gioco:
-il gioco si trova nel pacchetto [it.edu.iisgubbio.giocoFinale](src/it/edu/iisgubbio/giocoFinale) sotto il nome di SpaceShip.java
-Nello stesso percorso si possono notare molti file, MP3 per effetti sonori, CSS per lo stie, gif per animare il gioco, png per gli oggetti particolari (navicella, meteoriti, ufo, sfondo...) e in fine un file JAVA che contiene il codice del gioco.
+Questo gioco è stato programmato in gruppo da Michele Bellucci e Giacomo Lillacci e si trova nel pacchetto [it.edu.iisgubbio.giocoFinale](src/it/edu/iisgubbio/giocoFinale) sotto il nome di SpaceShip.java
+
+Nel percorso si possono notare molti file, MP3 per effetti sonori, CSS per lo stie, gif per animare il gioco, png per gli oggetti particolari (navicella, meteoriti, ufo, sfondo...) e in fine un file JAVA che contiene il codice del gioco.
 ## In cosa consiste:
 Questa è una repository contenente un gioco che consiste in una navicella spaziale che si ritrova nello spazio e deve evitare missili detriti ed altri oggetti spaziali. Per fare ciò ha a disposizione dei missili per distruggere gli oggetti che gli impediscono il passaggio e si può muovere per tutto lo schermo.
 #### PUNTEGGIO:
