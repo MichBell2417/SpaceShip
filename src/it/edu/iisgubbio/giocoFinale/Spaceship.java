@@ -684,7 +684,7 @@ public class Spaceship extends Application {
 		schermo.getChildren().clear();
 		switch(interfaccia) {
 		case 0:
-			if(modalitaGiocoIllimitato) {
+			if(modalitaGiocoIllimitato && !fineGioco) {
 				tempoSovpravvissuto+=System.currentTimeMillis()-tempoStart;
 			}
 			giocoIniziato=false;
@@ -722,10 +722,6 @@ public class Spaceship extends Application {
 			//costruiamo la schermata per il gioco
 			schermo.getChildren().add(sfondo);
 			schermo.getChildren().add(sfondo2);
-			posizioneNaviciella[0]=0;
-			posizioneNaviciella[1]=(HEIGTH_SCHERMO - WIDTH_NAVICELLA) / 2;
-			navicella.setLayoutX(posizioneNaviciella[0]);
-			navicella.setLayoutY(posizioneNaviciella[1]);
 			ellisseOriz.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2);
 			ellisseVert.setCenterX(posizioneNaviciella[0]+WIDTH_NAVICELLA/2);
 			ellisseOriz.setCenterY(posizioneNaviciella[1]+HEIGTH_NAVICELLA/2);
@@ -735,6 +731,24 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(navicella);
 			schermo.getChildren().add(ellisseOriz);
 			schermo.getChildren().add(ellisseVert);
+			for (int n = 0; n < nOggetti; n++) {
+				if(resetGame) {
+					riposizionaOggetto(n);
+				}
+				schermo.getChildren().add(vettoreOggetti[n]);
+				schermo.getChildren().add(vettoreEllissiCollisione[n]);
+			}
+			//costruiamo il menu delle informazioni
+			schermo.getChildren().add(informazioni);
+			schermo.getChildren().add(separaInformazioni1);
+			schermo.getChildren().add(separaInformazioni2);
+			schermo.getChildren().add(separaInformazioni3);
+			schermo.getChildren().add(ePunti);
+			schermo.getChildren().add(eNumeroPunti);
+			schermo.getChildren().add(eVite);
+			schermo.getChildren().add(eMunizioni);
+			schermo.getChildren().add(eNumeroMunizioni);
+			schermo.getChildren().add(bHomeGioco);
 			if(resetGame) {
 				//nel caso si sia in modalità di reset
 				if(modalitaGiocoIllimitato) {
@@ -742,6 +756,10 @@ public class Spaceship extends Application {
 					tempoStart=System.currentTimeMillis();
 				}
 				fineGioco=false;
+				posizioneNaviciella[0]=0;
+				posizioneNaviciella[1]=(HEIGTH_SCHERMO - WIDTH_NAVICELLA) / 2;
+				navicella.setLayoutX(posizioneNaviciella[0]);
+				navicella.setLayoutY(posizioneNaviciella[1]);
 				posizioneSfondoX = 0;
 				posizioneSfondo2X = WIDTH_SFONDO;
 				munizioniUtilizzate=0;
@@ -752,21 +770,17 @@ public class Spaceship extends Application {
 				riempiMunizioni();
 				numeroMunizioniAttuali=numeroMunizioni;
 				eNumeroMunizioni.setText(""+numeroMunizioniAttuali);
-				for (int n = 0; n < nOggetti; n++) {
-					riposizionaOggetto(n);
-					schermo.getChildren().add(vettoreOggetti[n]);
-					schermo.getChildren().add(vettoreEllissiCollisione[n]);
+				for(int i=0; i<vettoreCuori.length; i++) {
+					schermo.getChildren().add(vettoreCuori[i]);
 				}
 				sfocatura.setLayoutX(WIDTH_SFONDO);
 				resetGame=false;
 			}else{
-				//nel caso si sia in modalità normale
 				if(modalitaGiocoIllimitato) {
 					tempoStart=System.currentTimeMillis();
 				}
-				for (int n = 0; n < nOggetti; n++) {
-					schermo.getChildren().add(vettoreOggetti[n]);
-					schermo.getChildren().add(vettoreEllissiCollisione[n]);
+				for(int i=0; i<numeroViteRimaste; i++) {
+					schermo.getChildren().add(vettoreCuori[i]);
 				}
 				for (int nM = munizioniUtilizzate; nM < numeroMunizioni; nM++) {
 					schermo.getChildren().add(munizioni[nM]);
@@ -774,20 +788,6 @@ public class Spaceship extends Application {
 				sfocatura.setLayoutX(WIDTH_SFONDO); //posizioniamo la sfocatura fuori dallo schermo
 			}
 			schermo.getChildren().add(sfocatura);
-			//costruiamo il menu delle informazioni
-			schermo.getChildren().add(informazioni);
-			schermo.getChildren().add(separaInformazioni1);
-			schermo.getChildren().add(separaInformazioni2);
-			schermo.getChildren().add(separaInformazioni3);
-			schermo.getChildren().add(ePunti);
-			schermo.getChildren().add(eNumeroPunti);
-			schermo.getChildren().add(eVite);
-			for(int i=0; i<vettoreCuori.length; i++) {
-				schermo.getChildren().add(vettoreCuori[i]);
-			}
-			schermo.getChildren().add(eMunizioni);
-			schermo.getChildren().add(eNumeroMunizioni);
-			schermo.getChildren().add(bHomeGioco);
 			// movimento navicella
 			muoviNavicella.setCycleCount(Animation.INDEFINITE);
 			muoviNavicella.play();
@@ -851,14 +851,15 @@ public class Spaceship extends Application {
 			controllaCollisione.stop();
 			navicella.setOpacity(1);
 			giocoIniziato=false;
-			fineGioco=true;
 			int punteggioBonus=0;//le munizioni rimaste moltiplicate per 5
 			int punteggioVite=0; //le vite rimanenti moltiplicate per 100
 			if(modalitaGiocoIllimitato) {
 				eTitoloFinale.setText("THE END");
 				eTitoloFinale.setTextFill(Color.WHITE);
 				eTitoloFinale.setEffect(dropShadow1);
-				tempoSovpravvissuto+=System.currentTimeMillis()-tempoStart;
+				if(!fineGioco) {
+					tempoSovpravvissuto+=System.currentTimeMillis()-tempoStart;
+				}
 				punteggioBonus=(int)(tempoSovpravvissuto)/1000*10; //tempo sopravvissuto in Sec per 10
 				ePunteggioDaVita.setText("non contato");
 			}else {
@@ -876,6 +877,8 @@ public class Spaceship extends Application {
 				punteggioVite=numeroViteRimaste*100;
 				ePunteggioDaVita.setText(""+punteggioVite);
 			}
+			fineGioco=true;
+			
 			int punteggioTotale=punteggioAttuale+punteggioBonus+punteggioVite;
 
 			ePunteggioDaBonus.setText(""+punteggioBonus);
