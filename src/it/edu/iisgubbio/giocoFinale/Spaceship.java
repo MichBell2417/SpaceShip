@@ -24,6 +24,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
@@ -138,9 +141,12 @@ public class Spaceship extends Application {
 	Button bStartGioco= new Button("Start");
 	Button bResetGioco= new Button("Reset");
 	Button bSettings= new Button("Settings");
-	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("VideoSfondoHome.gif"));
-
-	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome);
+	
+//	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("VideoSfondoHome.gif"));
+//	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome); 
+	Media videoSfondoHome = new Media (getClass().getResource("VideoSfondoHome.mp4").toString());
+    MediaPlayer playerSfondoHome = new MediaPlayer (videoSfondoHome);
+    MediaView sfondoHomeFirstOpen = new MediaView (playerSfondoHome);
 	Rectangle sfondoHomeTrasperente= new Rectangle(WIDTH_SCHERMO, HEIGTH_SCHERMO);
 	Region menu= new Region();
 
@@ -564,6 +570,8 @@ public class Spaceship extends Application {
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();
+		playerSfondoHome.setCycleCount(-1);
+		playerSfondoHome.play();
 	}
 
 	public void metodoLampeggiaNavicella() {
@@ -738,17 +746,6 @@ public class Spaceship extends Application {
 				schermo.getChildren().add(vettoreOggetti[n]);
 				schermo.getChildren().add(vettoreEllissiCollisione[n]);
 			}
-			//costruiamo il menu delle informazioni
-			schermo.getChildren().add(informazioni);
-			schermo.getChildren().add(separaInformazioni1);
-			schermo.getChildren().add(separaInformazioni2);
-			schermo.getChildren().add(separaInformazioni3);
-			schermo.getChildren().add(ePunti);
-			schermo.getChildren().add(eNumeroPunti);
-			schermo.getChildren().add(eVite);
-			schermo.getChildren().add(eMunizioni);
-			schermo.getChildren().add(eNumeroMunizioni);
-			schermo.getChildren().add(bHomeGioco);
 			if(resetGame) {
 				//nel caso si sia in modalità di reset
 				if(modalitaGiocoIllimitato) {
@@ -770,24 +767,39 @@ public class Spaceship extends Application {
 				riempiMunizioni();
 				numeroMunizioniAttuali=numeroMunizioni;
 				eNumeroMunizioni.setText(""+numeroMunizioniAttuali);
-				for(int i=0; i<vettoreCuori.length; i++) {
-					schermo.getChildren().add(vettoreCuori[i]);
-				}
 				sfocatura.setLayoutX(WIDTH_SFONDO);
 				resetGame=false;
 			}else{
 				if(modalitaGiocoIllimitato) {
 					tempoStart=System.currentTimeMillis();
 				}
-				for(int i=0; i<numeroViteRimaste; i++) {
-					schermo.getChildren().add(vettoreCuori[i]);
-				}
 				for (int nM = munizioniUtilizzate; nM < numeroMunizioni; nM++) {
 					schermo.getChildren().add(munizioni[nM]);
 				}
-				sfocatura.setLayoutX(WIDTH_SFONDO); //posizioniamo la sfocatura fuori dallo schermo
+				//posizioniamo la sfocatura fuori dallo schermo
+				sfocatura.setLayoutX(WIDTH_SFONDO);
 			}
 			schermo.getChildren().add(sfocatura);
+			//costruiamo il menu delle informazioni sopra a tutto il resto
+			schermo.getChildren().add(informazioni);
+			schermo.getChildren().add(separaInformazioni1);
+			schermo.getChildren().add(separaInformazioni2);
+			schermo.getChildren().add(separaInformazioni3);
+			schermo.getChildren().add(ePunti);
+			schermo.getChildren().add(eNumeroPunti);
+			schermo.getChildren().add(eVite);
+			schermo.getChildren().add(eMunizioni);
+			schermo.getChildren().add(eNumeroMunizioni);
+			schermo.getChildren().add(bHomeGioco);
+			if(resetGame) {
+				for(int i=0; i<vettoreCuori.length; i++) {
+					schermo.getChildren().add(vettoreCuori[i]);
+				}
+			}else {
+				for(int i=0; i<numeroViteRimaste; i++) {
+					schermo.getChildren().add(vettoreCuori[i]);
+				}
+			}
 			// movimento navicella
 			muoviNavicella.setCycleCount(Animation.INDEFINITE);
 			muoviNavicella.play();
@@ -842,7 +854,6 @@ public class Spaceship extends Application {
 			schermo.getChildren().add(impostazioni);
 			schermo.getChildren().add(grigliaImpostazioni);
 			break;
-
 		case 3:
 			muoviSfondo.stop();
 			muoviNavicella.stop();
@@ -915,8 +926,8 @@ public class Spaceship extends Application {
 	 * riempie il numero di munizioni rendendole nuovamente disponibili tutte
 	 */
 	public void riempiMunizioni() {
+		Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
 		for (int nM = 0; nM < numeroMunizioni; nM++) {
-			Image immagineMissile = new Image(getClass().getResourceAsStream("Missile.png"));
 			statoMunizione[nM]=false;
 			munizioni[nM] = new ImageView(immagineMissile);
 			munizioni[nM].setFitHeight(HEIGTH_MISSILE);
@@ -1026,7 +1037,7 @@ public class Spaceship extends Application {
 	 * fa comparire il missile
 	 */
 	public void spara() {
-		//aspetto che pasino 100 millisecondi
+		//aspetto che passino 100 millisecondi
 		if (System.currentTimeMillis() - tempoScorsoMissile >= 100 && numeroMunizioniAttuali!=0) {
 			if (numeroMunizioniAttuali<=10 && numeroMunizioniAttuali>5) {
 				eNumeroMunizioni.setTextFill(Color.ORANGE);
@@ -1138,6 +1149,7 @@ public class Spaceship extends Application {
 					rimuoviOggetto(10, missileSottopostoBound);
 					statoMunizione[i] = true;
 				}
+				//TODO: far comparire l'esposione al di sotto del menuinformazioni
 				if (boundMissile.intersects(boundOggetti)) {
 					int posizioneXMissile, posizioneXMeteorie, posizioneYMissile;
 					posizioneXMissile = (int) (missileSottopostoBound.getLayoutX() + WIDTH_MISSILE);
@@ -1151,9 +1163,11 @@ public class Spaceship extends Application {
 						ImageView esplosione = new ImageView(animazioneEsplosione);
 						esplosione.setFitHeight(HEIGTH_ESPLOSIONE);
 						esplosione.setFitWidth(WIDTH_ESPLOSIONE);
-						schermo.getChildren().add(esplosione);
+						//calcoliamo la posizione dell'esplosione
 						esplosione.setLayoutX(((posizioneXMissile + posizioneXMeteorie) / 2) - WIDTH_ESPLOSIONE / 2);
 						esplosione.setLayoutY(posizioneYMissile - HEIGTH_ESPLOSIONE / 2);
+						schermo.getChildren().add(esplosione);
+						//eseguiamo il suono
 						if(ckEspolosione.isSelected()) {
 							suonoEsplosione.play();
 						}
