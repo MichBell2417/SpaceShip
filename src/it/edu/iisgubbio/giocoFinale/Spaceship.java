@@ -142,8 +142,6 @@ public class Spaceship extends Application {
 	Button bResetGioco= new Button("Reset");
 	Button bSettings= new Button("Settings");
 	
-//	Image immagineSfondoHome=new Image(getClass().getResourceAsStream("VideoSfondoHome.gif"));
-//	ImageView sfondoHomeFirstOpen=new ImageView(immagineSfondoHome); 
 	Media videoSfondoHome = new Media (getClass().getResource("VideoSfondoHome.mp4").toString());
     MediaPlayer playerSfondoHome = new MediaPlayer (videoSfondoHome);
     MediaView sfondoHomeFirstOpen = new MediaView (playerSfondoHome);
@@ -570,8 +568,9 @@ public class Spaceship extends Application {
 		finestra.setTitle("Spaceship");
 		finestra.setScene(scena);
 		finestra.show();
-		playerSfondoHome.setCycleCount(-1);
-		playerSfondoHome.play();
+		//vido sfondo
+		playerSfondoHome.setCycleCount(-1); //ripetiamo il video infinite volte
+		playerSfondoHome.play(); //iniziamo la riproduzione
 	}
 
 	public void metodoLampeggiaNavicella() {
